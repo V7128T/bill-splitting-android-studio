@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:id="@+id/layoutEqualBreakdown"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/labelTotalBill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Bill Amount (RM)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTotalBill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelTotalBill"
+            app:layout_constraintTop_toTopOf="@+id/labelTotalBill" />
+
+        <TextView
+            android:id="@+id/labelNumOfPeople"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of People"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
+
+        <EditText
+            android:id="@+id/editTextNumPeople"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
+            app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
+
+        <RadioGroup
+            android:id="@+id/radioGroupOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCalculate"
+            app:layout_constraintStart_toEndOf="@+id/editTextNumPeople"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople">
+
+            <RadioButton
+                android:id="@+id/radioButtonEqual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equal" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCustom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/buttonCalculate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calculate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople" />
+
+        <TextView
+            android:id="@+id/textViewResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonCalculate" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutCustomBreakdown"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/labelTotalBill2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Bill Amount (RM)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTotalBill2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelTotalBill"
+            app:layout_constraintTop_toTopOf="@+id/labelTotalBill" />
+
+        <TextView
+            android:id="@+id/labelNumOfPeople2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of People"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
+
+        <EditText
+            android:id="@+id/editTextNumPeople2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
+            app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
+
+        <TextView
+            android:id="@+id/textViewCustomBreakdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List of people (Max. 10 people)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layoutCustomPercentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople2">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutIndividualAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople2">
+
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/radioGroupOptions2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCalculate"
+            app:layout_constraintStart_toEndOf="@+id/editTextNumPeople"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople">
+
+            <RadioButton
+                android:id="@+id/radioButtonEqual2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equal" />
+
+            <RadioButton
+                android:id="@+id/radioButtonPercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:text="Percentage(%)" />
+
+            <RadioButton
+                android:id="@+id/radioButtonIndividualAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:text="Individual Amount" />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/buttonCalculateCustom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calculate Custom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextPercentage2" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
