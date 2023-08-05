@@ -1,5 +1,6 @@
 package my.utar.com.billsplittingapp;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         String numPeopleStr = editTextNumPeople.getText().toString();
 
         // Check if there's no radio button chosen
-        if (radioButtonEqual.isChecked() == false || radioButtonCustom.isChecked() == false) {
+        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false) {
             Toast.makeText(this, "Please choose one of the options below (Equal / Custom).", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextPercentageIds.setHint("Enter Percentage For Person " + i);
-            editTextPercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER); // Set input type to accept only NUMBERS
+            editTextPercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // Set input type to accept only NUMBERS
             layoutCustomPercentage.addView(editTextPercentageIds);
 
             // Add the dynamically generated EditText view to the list
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextIndividualIds.setHint("Enter Amount for Person " + i);
-            editTextIndividualIds.setInputType(InputType.TYPE_CLASS_NUMBER); // Set input type to accept only NUMBERS
+            editTextIndividualIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // Set input type to accept only NUMBERS
             layoutIndividualAmounts.addView(editTextIndividualIds);
 
             // Add the dynamically generated EditText view to the list
@@ -307,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()
                 || numPeopleStrPercent.isEmpty()) {
             Toast.makeText(this,
-                    "Please enter both the all the details before proceed calculation."
+                    "Please enter all the details before proceed calculation."
                     , Toast.LENGTH_SHORT).show();
             return;
         }
@@ -317,10 +318,15 @@ public class MainActivity extends AppCompatActivity {
         int numPeoplePercentage = Integer.parseInt(numPeopleStrPercent);
         int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
 
+        if (editTextPercentageList.isEmpty()){
+            Toast.makeText(this, "Please enter percentages for each person.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (radioButtonPercentage.isChecked()) {
             // Custom break-down: calculate individual amounts based on percentages
             double[] percentages = new double[numPeoplePercentage];
-            double totalPercentage = 0.0;
+            double totalPercentage = 0.00;
 
             // Get the custom percentages from EditText fields
             for (int i = 0; i < numPeoplePercentage; i++) {
@@ -348,13 +354,12 @@ public class MainActivity extends AppCompatActivity {
                 individualAmountsPerc[i] = (percentages[i] / 100.0) * totalBillAmount;
             }
 
-            //findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
 
             // Display the result in dialog
             StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n");
 
             // Line dashes
-            int lineLength = 60;
+            int lineLength = 42;
             for (int i = 0; i < lineLength; i++) {
                 customResultBuilder.append("-");
             }
@@ -362,11 +367,22 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < numPeoplePercentage; i++) {
 
-                customResultBuilder.append("Person ").append(i + 1).append(": ").append(percentages[i]).append("% - RM ").append(individualAmountsPerc[i]).append("\n");
+                String formattedAmount = String.format("%.2f", individualAmountsPerc[i]);
+                customResultBuilder.append("Person ").append(i + 1).append(": ").append(percentages[i]).append("% \n- RM ").append(formattedAmount).append("\n");
             }
 
-            resultDialog showResultDialog = resultDialog.newInstances(customResultBuilder.toString());
-            showResultDialog.show(getSupportFragmentManager(), customResultBuilder.toString());
+            // Inflate the custom_dialog.xml layout
+            View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
+
+            // Find the TextView inside the custom_dialog layout and set the result text
+            TextView textViewCustomResult = dialogView.findViewById(R.id.dialogMessage);
+            textViewCustomResult.setText(customResultBuilder.toString());
+
+            // Build and show the custom dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+            resultDialog dialog = resultDialog.newInstances(customResultBuilder.toString());
+            dialog.show(getSupportFragmentManager(), "custom_dialog");
 
 
             // Custom Break-down: Individual
@@ -396,10 +412,14 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Calculate the discrepancy amount (how much money is left out or exceeded)
                 double discrepancyAmount = totalIndividualAmount - totalBillAmount;
+
+                String formattedAmount = String.format("%.2f", discrepancyAmount);
+
                 if (discrepancyAmount > 0) {
-                    Toast.makeText(this, "The total amount exceeds the total bill by RM " + discrepancyAmount, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "The total amount exceeds the total bill by RM " + formattedAmount, Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(this, "The total amount is RM " + Math.abs(discrepancyAmount) + " less than the total bill.", Toast.LENGTH_SHORT).show();
+                    formattedAmount = String.format("%.2f", Math.abs(discrepancyAmount));
+                    Toast.makeText(this, "The total amount is RM " + formattedAmount + " less than the total bill.", Toast.LENGTH_LONG).show();
                 }
             }
 
