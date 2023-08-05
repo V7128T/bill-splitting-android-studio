@@ -6,7 +6,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId "my.utar.com.billsplittingapp"
+        applicationId 'my.utar.com.billsplittingapp'
         minSdk 22
         targetSdk 34
         versionCode 1

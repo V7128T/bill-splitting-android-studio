@@ -14,16 +14,22 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    private TextView labelTotalBill, labelNumOfPeople;
-    private EditText editTextTotalBill, editTextNumPeople, editTextTotalBill2, editTextNumPeople2, editPercentage1, editPercentage2;
+    private TextView labelNumOfPeople;
+    private EditText editTextTotalBill, editTextNumPeople, editTextTotalBill2, editTextNumPeoplePercentage, editTextNumPeopleIndividual;
     private RadioGroup radioGroupOptions;
     private RadioGroup radioGroupOptions2;
     private RadioButton radioButtonEqual, radioButtonCustom, radioButtonIndividualAmount,
             radioButtonPercentage;
     private Button buttonCalculate, buttonCustom;
     private TextView textViewResult;
+    private ArrayList<EditText> editTextPercentageList = new ArrayList<>();
+    private ArrayList<EditText> editTextIndividualList = new ArrayList<>();
 
     // Clear input field function
     public void clearEditText(EditText editText) {
@@ -35,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        labelTotalBill = findViewById(R.id.labelTotalBill);
+        TextView labelTotalBill = findViewById(R.id.labelTotalBill);
+        editTextNumPeoplePercentage = findViewById(R.id.editTextNumPeoplePercentage);
+        editTextNumPeopleIndividual = findViewById(R.id.editTextNumPeopleIndividual);
         editTextTotalBill = findViewById(R.id.editTextTotalBill);
         editTextTotalBill2 = findViewById(R.id.editTextTotalBill2);
         labelNumOfPeople = findViewById(R.id.labelNumOfPeople);
         editTextNumPeople = findViewById(R.id.editTextNumPeople);
-        editTextNumPeople2 = findViewById(R.id.editTextNumPeople2);
         radioGroupOptions = findViewById(R.id.radioGroupOptions);
         radioGroupOptions2 = findViewById(R.id.radioGroupOptions2);
         radioButtonEqual = findViewById(R.id.radioButtonEqual);
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     // Show custom breakdown UI and hide equal breakdown UI
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     radioButtonPercentage.setChecked(true);
                 }
@@ -79,11 +87,15 @@ public class MainActivity extends AppCompatActivity {
                     // Show percentage breakdown UI and hide custom breakdown UI
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    editTextNumPeoplePercentage.setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     // Show or hide the dynamic EditText fields based on selected option
                 } else if (checkedId == R.id.radioButtonIndividualAmount) {
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.VISIBLE);
+                    editTextNumPeoplePercentage.setVisibility(View.GONE);
+                    editTextNumPeopleIndividual.setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
 
                 } else {
@@ -111,10 +123,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialize the number of people to 2 initially
-        editTextNumPeople2.setText("2");
+        editTextNumPeoplePercentage.setText("2");
+        editTextNumPeopleIndividual.setText("2");
 
         // TextWatcher for Custom Percentage
-        editTextNumPeople2.addTextChangedListener(new TextWatcher() {
+
+        editTextNumPeoplePercentage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -130,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // TextWatcher for Individual Amounts
-        editTextNumPeople2.addTextChangedListener(new TextWatcher() {
+        editTextNumPeopleIndividual.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -145,10 +159,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Call updateIndividualAmountsLayout and updateCustomPercentageLayout
-        // initially to set up the layout with 2 input fields
-        //updateIndividualAmountsLayout();
-        //updateCustomPercentageLayout();
+
     }
 
 
@@ -189,56 +200,15 @@ public class MainActivity extends AppCompatActivity {
             textViewResult.setVisibility(View.VISIBLE);
             clearEditText(editTextNumPeople);
             clearEditText(editTextTotalBill);
-        } else {
-            // Custom bill Break-down
-            // Custom break-down: calculate individual amounts based on percentages
-            double[] percentages = new double[numPeople];
-            double totalPercentage = 0.0;
-
-            // Get the custom percentages from EditText fields
-            for (int i = 0; i < numPeople; i++) {
-                EditText editTextPercentage = findViewById(getResources().getIdentifier("editTextPercentage" + (i + 1), "id", getPackageName()));
-                String percentageStr = editTextPercentage.getText().toString();
-
-                if (percentageStr.isEmpty()) {
-                    Toast.makeText(this, "Please enter percentage for Person " + (i + 1), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                percentages[i] = Double.parseDouble(percentageStr);
-                totalPercentage += percentages[i];
-            }
-
-            // Check if the total percentage is 100%
-            if (Math.abs(totalPercentage - 100.0) > 0.001) {
-                Toast.makeText(this, "Total percentage must add up to 100%", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-
-            double[] individualAmounts;
-            // Calculate individual amounts based on percentages
-            individualAmounts = new double[numPeople];
-            for (int i = 0; i < numPeople; i++) {
-                individualAmounts[i] = (percentages[i] / 100.0) * totalBillAmount;
-            }
-
-            findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
-
-            // Display the result in the textViewResult
-            StringBuilder customResultBuilder = new StringBuilder("Bill Break-Down:\n");
-            for (int i = 0; i < numPeople; i++) {
-                customResultBuilder.append("Person ").append(i + 1).append(": RM ").append(individualAmounts[i]).append("\n");
-            }
         }
     }
 
     private void updateCustomPercentageLayout() {
-        EditText editTextNumPeople2 = findViewById(R.id.editTextNumPeople2);
+
         int numPeople;
 
         try {
-            numPeople = Integer.parseInt(editTextNumPeople2.getText().toString());
+            numPeople = Integer.parseInt(editTextNumPeoplePercentage.getText().toString());
         } catch (NumberFormatException e) {
             // If the "Number of People" field is empty or not a valid number, default to 2
             numPeople = 2;
@@ -253,24 +223,30 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout layoutCustomPercentage = findViewById(R.id.layoutCustomPercentage);
         layoutCustomPercentage.removeAllViews();
 
+        // Clear the existing list
+        editTextPercentageList.clear();
+
         for (int i = 1; i <= numPeople; i++) {
-            EditText editText = new EditText(this);
-            editText.setId(i);
-            editText.setLayoutParams(new LinearLayout.LayoutParams(
+            EditText editTextPercentageIds = new EditText(this);
+            editTextPercentageIds.setId(View.generateViewId()); // Generate unique ID
+            editTextPercentageIds.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
-            editText.setHint("Enter Percentage For Person " + i);
-            layoutCustomPercentage.addView(editText);
+            editTextPercentageIds.setHint("Enter Percentage For Person " + i);
+            layoutCustomPercentage.addView(editTextPercentageIds);
+
+            // Add the dynamically generated EditText view to the list
+            editTextPercentageList.add(editTextPercentageIds);
         }
     }
 
     private void updateIndividualAmountsLayout() {
-        EditText editTextNumPeople2 = findViewById(R.id.editTextNumPeople2);
+
         int numPeople;
 
         try {
-            numPeople = Integer.parseInt(editTextNumPeople2.getText().toString());
+            numPeople = Integer.parseInt(editTextNumPeopleIndividual.getText().toString());
         } catch (NumberFormatException e) {
             // If the "Number of People" field is empty or not a valid number, default to 2
             numPeople = 2;
@@ -285,44 +261,98 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout layoutIndividualAmounts = findViewById(R.id.layoutIndividualAmount);
         layoutIndividualAmounts.removeAllViews();
 
+        // Clear the existing list
+        editTextIndividualList.clear();
+
         for (int i = 1; i <= numPeople; i++) {
-            EditText editText = new EditText(this);
-            editText.setId(i);
-            editText.setLayoutParams(new LinearLayout.LayoutParams(
+            EditText editTextIndividualIds = new EditText(this);
+            editTextIndividualIds.setId(View.generateViewId());
+            editTextIndividualIds.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
-            editText.setHint("Enter Amount for Person " + i);
-            layoutIndividualAmounts.addView(editText);
+            editTextIndividualIds.setHint("Enter Amount for Person " + i);
+            layoutIndividualAmounts.addView(editTextIndividualIds);
+
+            // Add the dynamically generated EditText view to the list
+            editTextIndividualList.add(editTextIndividualIds);
         }
     }
 
     private void calculateCustomBillBreakdown() {
 
         // Get the total bill amount and number of people from EditText fields
-        String totalBillStr = editTextTotalBill2.getText().toString();
-        String numPeopleStr = editTextNumPeople2.getText().toString();
+        String numPeopleStrPercent = editTextNumPeoplePercentage.getText().toString();
+        String numPeopleStrIndividual = editTextNumPeopleIndividual.getText().toString();
 
+
+        String totalBillStr = editTextTotalBill2.getText().toString();
         // Check if the input fields are empty
-        if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
-            Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
+        if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()
+                || numPeopleStrPercent.isEmpty()) {
+            Toast.makeText(this,
+                    "Please enter both the all the details before proceed calculation."
+                    , Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Parse the input strings to doubles
         double totalBillAmount = Double.parseDouble(totalBillStr);
-        int numPeople = Integer.parseInt(numPeopleStr);
+        int numPeoplePercentage = Integer.parseInt(numPeopleStrPercent);
+        int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
 
         if (radioButtonPercentage.isChecked()) {
-            // ... (existing code for percentage calculation) ...
+            // Custom break-down: calculate individual amounts based on percentages
+            double[] percentages = new double[numPeoplePercentage];
+            double totalPercentage = 0.0;
+
+            // Get the custom percentages from EditText fields
+            for (int i = 0; i < numPeoplePercentage; i++) {
+                EditText editTextPercentageIds = editTextPercentageList.get(i);
+
+                if (editTextPercentageIds.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please enter percentage for Person " + (i + 1), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                percentages[i] = Double.parseDouble(editTextPercentageIds.getText().toString());
+                totalPercentage += percentages[i];
+            }
+
+            // Check if the total percentage is 100%
+            if (Math.abs(totalPercentage - 100.0) > 0.001) {
+                Toast.makeText(this, "Total percentage must add up to 100%", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            // Calculate individual amounts based on percentages
+            double[] individualAmounts = new double[numPeoplePercentage];
+            for (int i = 0; i < numPeoplePercentage; i++) {
+                individualAmounts[i] = (percentages[i] / 100.0) * totalBillAmount;
+            }
+
+            //findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
+
+            // Display the result in dialog
+            StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n" + "----------------------\n");
+            for (int i = 0; i < numPeoplePercentage; i++) {
+                customResultBuilder.append("Person ").append(i + 1).append(": RM ").append(individualAmounts[i]).append("\n");
+            }
+
+            resultDialog showResultDialog = resultDialog.newInstances(customResultBuilder.toString());
+            showResultDialog.show(getSupportFragmentManager(),customResultBuilder.toString());
+
+
+            // Custom Break-down: Individual
         } else if (radioButtonIndividualAmount.isChecked()) {
 
             // Get the individual amounts from dynamic EditText fields
-            double[] individualAmounts = new double[numPeople];
+            double[] individualAmounts = new double[numPeopleIndividual];
             double totalIndividualAmount = 0.0;
 
-            for (int i = 0; i < numPeople; i++) {
-                EditText editTextAmount = findViewById(i + 1);
+            for (int i = 0; i < numPeopleIndividual; i++) {
+                EditText editTextAmount = editTextIndividualList.get(i);
                 String amountStr = editTextAmount.getText().toString();
 
                 if (amountStr.isEmpty()) {
@@ -342,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Display the result in the textViewResult
             StringBuilder customResultBuilder = new StringBuilder("Bill Break-Down:\n");
-            for (int i = 0; i < numPeople; i++) {
+            for (int i = 0; i < numPeopleIndividual; i++) {
                 customResultBuilder.append("Person ").append(i + 1).append(": RM ").append(individualAmounts[i]).append("\n");
             }
             textViewResult.setText(customResultBuilder.toString());

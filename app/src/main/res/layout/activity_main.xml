@@ -129,7 +129,16 @@
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
 
         <EditText
-            android:id="@+id/editTextNumPeople2"
+            android:id="@+id/editTextNumPeoplePercentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
+            app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
+
+        <EditText
+            android:id="@+id/editTextNumPeopleIndividual"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
@@ -152,7 +161,7 @@
             android:inputType="number"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople2">
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeoplePercentage">
 
         </LinearLayout>
 
@@ -163,7 +172,7 @@
             android:inputType="number"
             android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople2">
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeopleIndividual">
 
         </LinearLayout>
 
