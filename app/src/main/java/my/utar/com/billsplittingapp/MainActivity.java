@@ -3,6 +3,7 @@ package my.utar.com.billsplittingapp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,9 +85,11 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 if (checkedId == R.id.radioButtonPercentage) {
-                    // Show percentage breakdown UI and hide custom breakdown UI
+                    // Show percentage breakdown UI and hide Equal breakdown UI
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
+                    editTextTotalBill2.setText("");
+                    editTextNumPeopleIndividual.setText("2");
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
                     editTextNumPeoplePercentage.setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
@@ -94,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if (checkedId == R.id.radioButtonIndividualAmount) {
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.VISIBLE);
+                    editTextTotalBill2.setText("");
+                    editTextNumPeoplePercentage.setText("2");
                     editTextNumPeoplePercentage.setVisibility(View.GONE);
                     editTextNumPeopleIndividual.setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
@@ -101,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
+                    editTextTotalBill2.setText("");
+                    editTextNumPeopleIndividual.setText("2");
+                    editTextNumPeoplePercentage.setText("2");
                     radioButtonEqual.setChecked(true);
                 }
 
@@ -169,6 +177,12 @@ public class MainActivity extends AppCompatActivity {
         String totalBillStr = editTextTotalBill.getText().toString();
         String numPeopleStr = editTextNumPeople.getText().toString();
 
+        // Check if there's no radio button chosen
+        if (radioButtonEqual.isChecked() == false || radioButtonCustom.isChecked() == false) {
+            Toast.makeText(this, "Please choose one of the options below (Equal / Custom).", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Check if the input fields are empty
         if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
             Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
@@ -234,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextPercentageIds.setHint("Enter Percentage For Person " + i);
+            editTextPercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER); // Set input type to accept only NUMBERS
             layoutCustomPercentage.addView(editTextPercentageIds);
 
             // Add the dynamically generated EditText view to the list
@@ -272,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextIndividualIds.setHint("Enter Amount for Person " + i);
+            editTextIndividualIds.setInputType(InputType.TYPE_CLASS_NUMBER); // Set input type to accept only NUMBERS
             layoutIndividualAmounts.addView(editTextIndividualIds);
 
             // Add the dynamically generated EditText view to the list
@@ -327,56 +343,52 @@ public class MainActivity extends AppCompatActivity {
 
 
             // Calculate individual amounts based on percentages
-            double[] individualAmounts = new double[numPeoplePercentage];
+            double[] individualAmountsPerc = new double[numPeoplePercentage];
             for (int i = 0; i < numPeoplePercentage; i++) {
-                individualAmounts[i] = (percentages[i] / 100.0) * totalBillAmount;
+                individualAmountsPerc[i] = (percentages[i] / 100.0) * totalBillAmount;
             }
 
             //findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
 
             // Display the result in dialog
-            StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n" + "----------------------\n");
+            StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n");
+
+            // Line dashes
+            int lineLength = 60;
+            for (int i = 0; i < lineLength; i++) {
+                customResultBuilder.append("-");
+            }
+            customResultBuilder.append("\n");
+
             for (int i = 0; i < numPeoplePercentage; i++) {
-                customResultBuilder.append("Person ").append(i + 1).append(": RM ").append(individualAmounts[i]).append("\n");
+
+                customResultBuilder.append("Person ").append(i + 1).append(": ").append(percentages[i]).append("% - RM ").append(individualAmountsPerc[i]).append("\n");
             }
 
             resultDialog showResultDialog = resultDialog.newInstances(customResultBuilder.toString());
-            showResultDialog.show(getSupportFragmentManager(),customResultBuilder.toString());
+            showResultDialog.show(getSupportFragmentManager(), customResultBuilder.toString());
 
 
             // Custom Break-down: Individual
         } else if (radioButtonIndividualAmount.isChecked()) {
 
             // Get the individual amounts from dynamic EditText fields
-            double[] individualAmounts = new double[numPeopleIndividual];
+            double[] individualAmountsIndiv = new double[numPeopleIndividual];
             double totalIndividualAmount = 0.0;
 
             for (int i = 0; i < numPeopleIndividual; i++) {
-                EditText editTextAmount = editTextIndividualList.get(i);
-                String amountStr = editTextAmount.getText().toString();
+                EditText editTextIndividual = editTextIndividualList.get(i);
+                String amountStr = editTextIndividual.getText().toString();
 
                 if (amountStr.isEmpty()) {
                     Toast.makeText(this, "Please enter amount for Person " + (i + 1), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                individualAmounts[i] = Double.parseDouble(amountStr);
-                totalIndividualAmount += individualAmounts[i];
+                individualAmountsIndiv[i] = Double.parseDouble(amountStr);
+                totalIndividualAmount += individualAmountsIndiv[i];
             }
 
-            // Check if the total individual amount matches the total bill amount
-            if (Math.abs(totalIndividualAmount - totalBillAmount) > 0.001) {
-                Toast.makeText(this, "Total individual amount must be equal to the total bill amount.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Display the result in the textViewResult
-            StringBuilder customResultBuilder = new StringBuilder("Bill Break-Down:\n");
-            for (int i = 0; i < numPeopleIndividual; i++) {
-                customResultBuilder.append("Person ").append(i + 1).append(": RM ").append(individualAmounts[i]).append("\n");
-            }
-            textViewResult.setText(customResultBuilder.toString());
-            textViewResult.setVisibility(View.VISIBLE);
 
             // Check if the total individual amount matches the total bill amount exactly
             if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
@@ -390,6 +402,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "The total amount is RM " + Math.abs(discrepancyAmount) + " less than the total bill.", Toast.LENGTH_SHORT).show();
                 }
             }
+
         }
     }
 }
