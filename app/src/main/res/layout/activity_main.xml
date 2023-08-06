@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             android:id="@+id/labelNumOfPeople"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number of People"
+            android:text="Number of People (Max. 10)"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
 
@@ -69,7 +69,15 @@
                 android:id="@+id/radioButtonCustom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:text="Custom" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCombine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Combine" />
         </RadioGroup>
 
         <Button
@@ -89,8 +97,8 @@
             android:background="@drawable/container_background"
             android:orientation="vertical"
             android:paddingLeft="50dp"
-            android:paddingRight="50dp"
             android:paddingTop="25dp"
+            android:paddingRight="50dp"
             android:paddingBottom="100dp"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -98,6 +106,150 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonCalculate" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutCombine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="parent">
+
+
+        <TextView
+            android:id="@+id/labelTotalBillCombine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Bill Amount (RM)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextTotalBillCombine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelTotalBillCombine"
+            app:layout_constraintTop_toTopOf="@+id/labelTotalBillCombine" />
+
+
+        <TextView
+            android:id="@+id/labelNumOfPeopleCombine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Number of People (Max. 10)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTotalBillCombine" />
+
+        <EditText
+            android:id="@+id/editTextNumPeopleCombine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/labelNumOfPeopleCombine"
+            app:layout_constraintTop_toTopOf="@+id/labelNumOfPeopleCombine" />
+
+
+        <RadioGroup
+            android:id="@+id/radioGroupCombine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCalculate"
+            app:layout_constraintStart_toEndOf="@+id/editTextNumPeople"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeople">
+
+            <RadioButton
+                android:id="@+id/radioButtonEqual3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Equal" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCustom2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Custom" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCombine2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="Combine" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textViewCombine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(%) Percentage for Individuals **Max. 10people**"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/container_background">
+
+            <LinearLayout
+                android:id="@+id/layoutCombinePercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="parent">
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+        <TextView
+            android:id="@+id/textViewCombine2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(RM) Amounts for Individuals **Max. 10people**"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/container_background">
+
+            <LinearLayout
+                android:id="@+id/layoutCombineAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="parent">
+
+            </LinearLayout>
+        </ScrollView>
+
+
+        <Button
+            android:id="@+id/buttonCalculateCombine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Calculate Combine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeopleCombine" />
+
 
     </LinearLayout>
 
@@ -131,7 +283,7 @@
             android:id="@+id/labelNumOfPeople2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Number of People"
+            android:text="Number of People (Max. 10)"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
 
@@ -161,27 +313,44 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/layoutCustomPercentage"
+
+        <ScrollView
+            android:id="@+id/svPercentage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeoplePercentage">
+            android:layout_height="200dp"
+            android:background="@drawable/container_background">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutCustomPercentage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNumPeoplePercentage">
 
-        <LinearLayout
-            android:id="@+id/layoutIndividualAmount"
+            </LinearLayout>
+        </ScrollView>
+
+
+        <ScrollView
+            android:id="@+id/svIndividualAmount"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/editTextNumPeopleIndividual">
+            android:layout_height="200dp"
+            android:background="@drawable/container_background">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/layoutIndividualAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@+id/editTextNumPeopleIndividual">
+
+            </LinearLayout>
+        </ScrollView>
+
 
         <RadioGroup
             android:id="@+id/radioGroupOptions2"
@@ -222,9 +391,9 @@
             android:text="Calculate Custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPercentage2" />
+            app:layout_constraintTop_toBottomOf="@+id/radioGroupOptions2" />
 
     </LinearLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

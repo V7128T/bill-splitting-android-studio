@@ -1,11 +1,18 @@
 package my.utar.com.billsplittingapp;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,48 +23,57 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView labelNumOfPeople;
-    private EditText editTextTotalBill, editTextNumPeople, editTextTotalBill2, editTextNumPeoplePercentage, editTextNumPeopleIndividual;
-    private RadioGroup radioGroupOptions;
-    private RadioGroup radioGroupOptions2;
+    private EditText editTextTotalBill, editTextNumPeople, editTextTotalBill2,
+            editTextNumPeoplePercentage, editTextNumPeopleIndividual,
+            editTextNumPeopleCombine, editTextTotalBillCombine;
+    private RadioGroup radioGroupOptions, radioGroupOptions2, radioGroupCombine;
     private RadioButton radioButtonEqual, radioButtonCustom, radioButtonIndividualAmount,
-            radioButtonPercentage;
-    private Button buttonCalculate, buttonCustom;
+            radioButtonPercentage, radioButtonCombine, radioButtonCombine2;
+    private Button buttonCalculate, buttonCustom, buttonCalculateCombine;
     private TextView textViewResult;
     private ArrayList<EditText> editTextPercentageList = new ArrayList<>();
     private ArrayList<EditText> editTextIndividualList = new ArrayList<>();
+    private ArrayList<EditText> editTextCombinePercentageList = new ArrayList<>();
+    private ArrayList<EditText> editTextCombineAmountList = new ArrayList<>();
 
     // Clear input field function
     public void clearEditText(EditText editText) {
         editText.setText("");
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView labelTotalBill = findViewById(R.id.labelTotalBill);
+        setTitle("Bill Splitting");
+
+
+        editTextNumPeople = findViewById(R.id.editTextNumPeople);
         editTextNumPeoplePercentage = findViewById(R.id.editTextNumPeoplePercentage);
         editTextNumPeopleIndividual = findViewById(R.id.editTextNumPeopleIndividual);
+        editTextNumPeopleCombine = findViewById(R.id.editTextNumPeopleCombine);
         editTextTotalBill = findViewById(R.id.editTextTotalBill);
         editTextTotalBill2 = findViewById(R.id.editTextTotalBill2);
-        labelNumOfPeople = findViewById(R.id.labelNumOfPeople);
-        editTextNumPeople = findViewById(R.id.editTextNumPeople);
+        editTextTotalBillCombine = findViewById(R.id.editTextTotalBillCombine);
         radioGroupOptions = findViewById(R.id.radioGroupOptions);
         radioGroupOptions2 = findViewById(R.id.radioGroupOptions2);
+        radioGroupCombine = findViewById(R.id.radioGroupCombine);
         radioButtonEqual = findViewById(R.id.radioButtonEqual);
         radioButtonCustom = findViewById(R.id.radioButtonCustom);
+        radioButtonCombine = findViewById(R.id.radioButtonCombine);
+        radioButtonCombine2 = findViewById(R.id.radioButtonCombine2);
         radioButtonIndividualAmount = findViewById(R.id.radioButtonIndividualAmount);
         radioButtonPercentage = findViewById(R.id.radioButtonPercentage);
         buttonCalculate = findViewById(R.id.buttonCalculate);
         buttonCustom = findViewById(R.id.buttonCalculateCustom);
+        buttonCalculateCombine = findViewById(R.id.buttonCalculateCombine);
         textViewResult = findViewById(R.id.textViewResult);
 
         findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
@@ -68,15 +84,64 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radioButtonEqual) {
                     // Show equal breakdown UI and hide custom breakdown UI
+                    setTitle("Equal Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
                 } else if (checkedId == R.id.radioButtonCustom) {
                     // Show custom breakdown UI and hide equal breakdown UI
+                    setTitle("Custom Breakdown: Percentage");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     radioButtonPercentage.setChecked(true);
+                } else {
+                    setTitle("Combined Breakdown: Percentage & Amounts");
+                    findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
+                    editTextNumPeople.setVisibility(View.GONE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    editTextNumPeoplePercentage.setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
+                    findViewById(R.id.layoutCombinePercentage).setVisibility(View.VISIBLE);
+                    findViewById(R.id.layoutCombineAmount).setVisibility(View.VISIBLE);
+                    editTextTotalBillCombine.setVisibility(View.VISIBLE);
+                    editTextNumPeopleCombine.setVisibility(View.VISIBLE);
+                    radioButtonCombine2.setChecked(true);
+                }
+            }
+        });
+
+        radioGroupCombine.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.radioButtonEqual3) {
+                    // Show equal breakdown UI and hide custom breakdown UI
+                    setTitle("Equal Breakdown");
+                    findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
+                    findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
+                    editTextNumPeople.setVisibility(View.VISIBLE);
+                    radioButtonEqual.setChecked(true);
+                } else if (checkedId == R.id.radioButtonCustom2) {
+                    // Show custom breakdown UI and hide equal breakdown UI
+                    setTitle("Custom Breakdown: Percentage");
+                    findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
+                    radioButtonPercentage.setChecked(true);
+                } else {
+                    setTitle("Combined Breakdown: Percentage & Amounts");
+                    findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
+                    radioButtonCombine.setChecked(true);
                 }
             }
         });
@@ -87,26 +152,59 @@ public class MainActivity extends AppCompatActivity {
 
                 if (checkedId == R.id.radioButtonPercentage) {
                     // Show percentage breakdown UI and hide Equal breakdown UI
+                    setTitle("Custom Breakdown: Percentage");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
+                    findViewById(R.id.svIndividualAmount).setVisibility(View.GONE);
+                    findViewById(R.id.svPercentage).setVisibility(View.VISIBLE);
                     editTextTotalBill2.setText("");
                     editTextNumPeopleIndividual.setText("2");
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
                     editTextNumPeoplePercentage.setVisibility(View.VISIBLE);
+                    editTextTotalBillCombine.setVisibility(View.GONE);
+                    editTextNumPeopleCombine.setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     // Show or hide the dynamic EditText fields based on selected option
                 } else if (checkedId == R.id.radioButtonIndividualAmount) {
+                    setTitle("Custom Breakdown: Individual Amounts");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.VISIBLE);
+                    findViewById(R.id.svPercentage).setVisibility(View.GONE);
+                    findViewById(R.id.svIndividualAmount).setVisibility(View.VISIBLE);
                     editTextTotalBill2.setText("");
                     editTextNumPeoplePercentage.setText("2");
                     editTextNumPeoplePercentage.setVisibility(View.GONE);
                     editTextNumPeopleIndividual.setVisibility(View.VISIBLE);
+                    editTextTotalBillCombine.setVisibility(View.GONE);
+                    editTextNumPeopleCombine.setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
 
+                } else if (checkedId == R.id.radioButtonCombine) {
+                    setTitle("Combined Breakdown: Percentage & Amounts");
+                    findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
+                    editTextTotalBill2.setText("");
+                    editTextNumPeopleIndividual.setText("2");
+                    editTextNumPeoplePercentage.setText("2");
+                    editTextNumPeoplePercentage.setVisibility(View.GONE);
+                    editTextNumPeopleIndividual.setVisibility(View.GONE);
+
                 } else {
+                    setTitle("Equal Breakdown");
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
+                    findViewById(R.id.layoutCombine).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombinePercentage).setVisibility(View.GONE);
+                    findViewById(R.id.layoutCombineAmount).setVisibility(View.GONE);
+                    findViewById(R.id.svPercentage).setVisibility(View.GONE);
+                    findViewById(R.id.svIndividualAmount).setVisibility(View.GONE);
+                    //editTextNumPeoplePercentage.setVisibility(View.GONE);
+                    //editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    editTextTotalBillCombine.setVisibility(View.GONE);
+                    editTextNumPeopleCombine.setVisibility(View.GONE);
                     editTextTotalBill2.setText("");
                     editTextNumPeopleIndividual.setText("2");
                     editTextNumPeoplePercentage.setText("2");
@@ -128,6 +226,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calculateCustomBillBreakdown();
+            }
+        });
+
+        buttonCalculateCombine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateCombineBillBreakdown();
             }
         });
 
@@ -168,6 +273,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // TextWatcher for Individual Amounts
+        editTextNumPeopleCombine.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                updateCombineLayout();
+            }
+        });
+
 
     }
 
@@ -178,9 +299,12 @@ public class MainActivity extends AppCompatActivity {
         String totalBillStr = editTextTotalBill.getText().toString();
         String numPeopleStr = editTextNumPeople.getText().toString();
 
+        // Set Maximum 10 people
+        int maxNumPeople = 10;
+
         // Check if there's no radio button chosen
-        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false) {
-            Toast.makeText(this, "Please choose one of the options below (Equal / Custom).", Toast.LENGTH_SHORT).show();
+        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false && radioButtonCombine.isChecked() == false) {
+            Toast.makeText(this, "Please choose one of the options below (Equal / Custom / Combine).", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -194,9 +318,12 @@ public class MainActivity extends AppCompatActivity {
         double totalBillAmount = Double.parseDouble(totalBillStr);
         int numPeople = Integer.parseInt(numPeopleStr);
 
-        // Check if the number of people is greater than zero
-        if (numPeople <= 0) {
-            Toast.makeText(this, "Please enter a valid number of people (greater than zero).", Toast.LENGTH_SHORT).show();
+        // Check if the number of people is greater than two and not greater than 10
+        if (numPeople < 2) {
+            Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -220,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateCustomPercentageLayout() {
 
-        int numPeople;
+        int numPeople, maxNumPeople = 10;
 
         try {
             numPeople = Integer.parseInt(editTextNumPeoplePercentage.getText().toString());
@@ -231,8 +358,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Ensure that the number of people is at least 2
         if (numPeople < 2) {
-            Toast.makeText(this, "Number of People must be MORE than or EQUAL to 2!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
             numPeople = 2;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            numPeople = 10;
         }
 
         LinearLayout layoutCustomPercentage = findViewById(R.id.layoutCustomPercentage);
@@ -259,7 +389,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateIndividualAmountsLayout() {
 
-        int numPeople;
+        // Set the maximum number of people to 10
+        int numPeople, maxNumPeople = 10;
 
         try {
             numPeople = Integer.parseInt(editTextNumPeopleIndividual.getText().toString());
@@ -268,10 +399,14 @@ public class MainActivity extends AppCompatActivity {
             numPeople = 2;
         }
 
-        // Ensure that the number of people is at least 2
+
+        // Ensure that the number of people is at least 2 and not more than 10
         if (numPeople < 2) {
-            Toast.makeText(this, "Number of People must be MORE than or EQUAL to 2!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
             numPeople = 2;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            numPeople = 10;
         }
 
         LinearLayout layoutIndividualAmounts = findViewById(R.id.layoutIndividualAmount);
@@ -296,12 +431,77 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateCombineLayout() {
+
+
+        Log.d("CombineLayout", "updateCombineLayout() called");
+        int numPeople, maxNumPeople = 10;
+
+        try {
+            numPeople = Integer.parseInt(editTextNumPeopleCombine.getText().toString());
+            Log.d("CombineLayout", "Number of people: " + numPeople);
+        } catch (NumberFormatException e) {
+            numPeople = 2;
+        }
+
+        if (numPeople < 2) {
+            Toast.makeText(this, "Number of People must be MORE than or EQUAL to 2!", Toast.LENGTH_SHORT).show();
+            numPeople = 2;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            numPeople = 10;
+        }
+
+
+        // Log the visibility status of the layout
+        Log.d("CombineLayout", "layoutCombinePercentage visibility: "
+                + findViewById(R.id.layoutCombinePercentage).getVisibility());
+        Log.d("CombineLayout", "layoutCombineAmount visibility: "
+                + findViewById(R.id.layoutCombineAmount).getVisibility());
+
+        LinearLayout layoutCombinePercentage = findViewById(R.id.layoutCombinePercentage);
+        LinearLayout layoutCombineAmount = findViewById(R.id.layoutCombineAmount);
+        layoutCombinePercentage.removeAllViews();
+        layoutCombineAmount.removeAllViews();
+
+        editTextCombinePercentageList.clear();
+        editTextCombineAmountList.clear();
+
+        for (int i = 1; i <= numPeople; i++) {
+            // Combine Percentage
+            EditText editTextCombinePercentageIds = new EditText(this);
+            editTextCombinePercentageIds.setId(View.generateViewId());
+            editTextCombinePercentageIds.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            editTextCombinePercentageIds.setHint("Enter Percentage For Person " + i);
+            editTextCombinePercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            layoutCombinePercentage.addView(editTextCombinePercentageIds);
+
+
+            // Combine Amount
+            EditText editTextCombineAmountIds = new EditText(this);
+            editTextCombineAmountIds.setId(View.generateViewId());
+            editTextCombineAmountIds.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            editTextCombineAmountIds.setHint("Enter Amount for Person " + i);
+            editTextCombineAmountIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            layoutCombineAmount.addView(editTextCombineAmountIds);
+
+            // Add the dynamically generated EditText view to the list
+            editTextCombinePercentageList.add(editTextCombinePercentageIds);
+            editTextCombineAmountList.add(editTextCombineAmountIds);
+        }
+    }
+
     private void calculateCustomBillBreakdown() {
 
         // Get the total bill amount and number of people from EditText fields
         String numPeopleStrPercent = editTextNumPeoplePercentage.getText().toString();
         String numPeopleStrIndividual = editTextNumPeopleIndividual.getText().toString();
-
 
         String totalBillStr = editTextTotalBill2.getText().toString();
         // Check if the input fields are empty
@@ -318,7 +518,8 @@ public class MainActivity extends AppCompatActivity {
         int numPeoplePercentage = Integer.parseInt(numPeopleStrPercent);
         int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
 
-        if (editTextPercentageList.isEmpty()){
+
+        if (editTextPercentageList.isEmpty()) {
             Toast.makeText(this, "Please enter percentages for each person.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -425,4 +626,143 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+    // Method to handle the calculation for Combine option
+    private void calculateCombineBillBreakdown() {
+
+        // Get the total bill amount and number of people from EditText fields
+        String numPeopleStr = editTextNumPeopleCombine.getText().toString();
+        String totalBillStr = editTextTotalBillCombine.getText().toString();
+
+        int maxNumPeople = 10;
+
+        // Check if the input fields are empty
+        if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
+            Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Parse the input strings to doubles
+        double totalBillAmount = Double.parseDouble(totalBillStr);
+        int numPeople = Integer.parseInt(numPeopleStr);
+
+        // Check if the number of people is greater than zero
+        if (numPeople < 2) {
+            Toast.makeText(this, "Please enter a valid number of people (greater than 2).", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Get the individual amounts and percentages from dynamic EditText fields
+        double[] individualAmounts = new double[numPeople];
+        double[] percentages = new double[numPeople];
+        double totalPercentage = 0.0;
+        double totalIndividualAmount = 0.0;
+
+        for (int i = 0; i < numPeople; i++) {
+            EditText editTextPercentage = editTextCombinePercentageList.get(i);
+            EditText editTextAmount = editTextCombineAmountList.get(i);
+
+            String percentageStr = editTextPercentage.getText().toString();
+            String amountStr = editTextAmount.getText().toString();
+
+            if (percentageStr.isEmpty() || amountStr.isEmpty()) {
+                Toast.makeText(this, "Please enter both percentage and amount for Person " + (i + 1), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            percentages[i] = Double.parseDouble(percentageStr);
+            totalPercentage += percentages[i];
+
+            individualAmounts[i] = Double.parseDouble(amountStr);
+            totalIndividualAmount += individualAmounts[i];
+        }
+
+        // Check if the total percentage is 100%
+        if (Math.abs(totalPercentage - 100.0) > 0.001) {
+            Toast.makeText(this, "Total percentage must add up to 100%", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if the total individual amount matches the total bill amount exactly
+        if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
+            Toast.makeText(this, "Amounts are correctly calculated.", Toast.LENGTH_SHORT).show();
+        } else {
+            // Calculate the discrepancy amount (how much money is left out or exceeded)
+            double discrepancyAmount = totalIndividualAmount - totalBillAmount;
+
+            String formattedAmount = String.format("%.2f", discrepancyAmount);
+
+            if (discrepancyAmount > 0) {
+                Toast.makeText(this, "The total amount exceeds the total bill by RM " + formattedAmount, Toast.LENGTH_LONG).show();
+            } else {
+                formattedAmount = String.format("%.2f", Math.abs(discrepancyAmount));
+                Toast.makeText(this, "The total amount is RM " + formattedAmount + " less than the total bill.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    // Share via Whatsapp
+    private void shareViaWhatsApp(String message) {
+        Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+        whatsappIntent.setType("text/plain");
+        whatsappIntent.setPackage("com.whatsapp"); // Specify WhatsApp package name to ensure sharing via WhatsApp
+
+        // Message here
+        whatsappIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        // Checking whether Whatsapp
+        // is installed or not
+        if (whatsappIntent.resolveActivity(getPackageManager()) == null) {
+            Toast.makeText(this, "Please install whatsapp first.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        startActivity(whatsappIntent);
+    }
+
+    // Share via email
+    private void shareViaEmail(String subject, String message, String[] recipients) {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Choose an email client"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Handle the case where no email clients are installed on the device
+            Toast.makeText(this, "No email clients installed.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // Menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_view_history) {
+            Intent intent = new Intent(this, ViewHistory.class);
+            startActivity(intent);
+        } else {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
+
