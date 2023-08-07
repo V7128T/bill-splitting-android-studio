@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Add your views to display the details of each history item -->
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date: "
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textViewCalculationType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calculation Type: " />
+
+    <TextView
+        android:id="@+id/textViewTotalBill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Bill(RM): " />
+
+    <TextView
+        android:id="@+id/textViewIndividualAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Individual Amount(RM): " />
+
+    <TextView
+        android:id="@+id/textViewIndividualPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Individual Percentage(%): " />
+
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result message: " />
+
+</LinearLayout>

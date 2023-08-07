@@ -1,30 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!-- Add your content views here, e.g., RecyclerView or ListView to show the history -->
 
     <!-- Floating Action Button for Share -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_above="@+id/fabDelete"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/colorTheme"
         android:src="@drawable/ic_baseline_share_24"
-        android:tint="@color/white"
-        android:backgroundTint="@color/colorShare" />
+        android:tint="@color/colorShare"
+        app:fabSize="auto"
+        app:layout_anchor="@+id/recyclerViewHistory"
+        app:layout_anchorGravity="end|bottom" />
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Add a Toolbar here if needed -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewHistory"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp "/>
+        </LinearLayout>
     </ScrollView>
 
 

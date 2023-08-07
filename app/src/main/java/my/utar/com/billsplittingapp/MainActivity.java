@@ -1,11 +1,13 @@
 package my.utar.com.billsplittingapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.InputType;
@@ -24,7 +26,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("Bill Splitting");
-
-
+        DeleteData("equal_breakdown");
+        DeleteData("individual_breakdown");
+        DeleteData("percentage_breakdown");
         editTextNumPeople = findViewById(R.id.editTextNumPeople);
         editTextNumPeoplePercentage = findViewById(R.id.editTextNumPeoplePercentage);
         editTextNumPeopleIndividual = findViewById(R.id.editTextNumPeopleIndividual);
@@ -293,58 +303,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void calculateEqualBillBreakdown() {
-
-        // Get the total bill amount and number of people from EditText fields
-        String totalBillStr = editTextTotalBill.getText().toString();
-        String numPeopleStr = editTextNumPeople.getText().toString();
-
-        // Set Maximum 10 people
-        int maxNumPeople = 10;
-
-        // Check if there's no radio button chosen
-        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false && radioButtonCombine.isChecked() == false) {
-            Toast.makeText(this, "Please choose one of the options below (Equal / Custom / Combine).", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check if the input fields are empty
-        if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
-            Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Parse the input strings to doubles
-        double totalBillAmount = Double.parseDouble(totalBillStr);
-        int numPeople = Integer.parseInt(numPeopleStr);
-
-        // Check if the number of people is greater than two and not greater than 10
-        if (numPeople < 2) {
-            Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (numPeople > maxNumPeople) {
-            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // Calculate the bill break-down based on the selected option (Equal or Custom)
-        if (radioButtonEqual.isChecked()) {
-            // Equal break-down: divide total bill amount by the number of people
-            double equalAmount = totalBillAmount / numPeople;
-
-            // Display the result in the textViewResult
-            StringBuilder resultBuilder = new StringBuilder("Bill Break-Down:\n");
-
-            String formattedAmount = String.format("%.2f", equalAmount);
-            resultBuilder.append("Each person need to pay: RM").append(formattedAmount).append(".");
-
-            textViewResult.setText(resultBuilder.toString());
-            textViewResult.setVisibility(View.VISIBLE);
-            clearEditText(editTextNumPeople);
-            clearEditText(editTextTotalBill);
-        }
-    }
-
     private void updateCustomPercentageLayout() {
 
         int numPeople, maxNumPeople = 10;
@@ -497,13 +455,76 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void calculateEqualBillBreakdown() {
+
+        // Get the total bill amount and number of people from EditText fields
+        String totalBillStr = editTextTotalBill.getText().toString();
+        String numPeopleStr = editTextNumPeople.getText().toString();
+
+        // Set Maximum 10 people
+        int maxNumPeople = 10;
+
+        // Check if there's no radio button chosen
+        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false && radioButtonCombine.isChecked() == false) {
+            Toast.makeText(this, "Please choose one of the options below (Equal / Custom / Combine).", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if the input fields are empty
+        if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
+            Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Parse the input strings to doubles
+        double totalBillAmount = Double.parseDouble(totalBillStr);
+        int numPeople = Integer.parseInt(numPeopleStr);
+
+        // Check if the number of people is greater than two and not greater than 10
+        if (numPeople < 2) {
+            Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
+            return;
+        } else if (numPeople > maxNumPeople) {
+            Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Calculate the bill break-down based on the selected option (Equal or Custom)
+        if (radioButtonEqual.isChecked()) {
+            // Equal break-down: divide total bill amount by the number of people
+            double equalAmount = totalBillAmount / numPeople;
+
+            // Create an ArrayList of Person objects with equal amounts
+            ArrayList<Person> personDetails = new ArrayList<>();
+            for (int i = 0; i < numPeople; i++) {
+                personDetails.add(new Person("Equal Breakdown", "Person " + (i + 1), totalBillAmount, equalAmount, 0));
+            }
+
+            // Display the result in the textViewResult
+            StringBuilder resultBuilder = new StringBuilder("Bill Break-Down:\n");
+
+            String formattedAmount = String.format("%.2f", equalAmount);
+            resultBuilder.append("Each person need to pay: RM").append(formattedAmount).append(".");
+
+            textViewResult.setText(resultBuilder.toString());
+            textViewResult.setVisibility(View.VISIBLE);
+
+            // Save the calculated result and details in SharedPreferences
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+            saveSharedPreferencesEqual(currentDate, personDetails);
+
+            clearEditText(editTextNumPeople);
+            clearEditText(editTextTotalBill);
+        }
+    }
+
     private void calculateCustomBillBreakdown() {
 
         // Get the total bill amount and number of people from EditText fields
         String numPeopleStrPercent = editTextNumPeoplePercentage.getText().toString();
         String numPeopleStrIndividual = editTextNumPeopleIndividual.getText().toString();
-
         String totalBillStr = editTextTotalBill2.getText().toString();
+
         // Check if the input fields are empty
         if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()
                 || numPeopleStrPercent.isEmpty()) {
@@ -542,6 +563,14 @@ public class MainActivity extends AppCompatActivity {
                 totalPercentage += percentages[i];
             }
 
+            // Create an ArrayList of Person objects with custom percentages
+            ArrayList<Person> personDetails = new ArrayList<>();
+            for (int i = 0; i < numPeoplePercentage; i++) {
+                double individualAmount = (percentages[i] / 100.0) * totalBillAmount;
+                personDetails.add(new Person("Custom Percentage", "Person" + (i + 1), totalBillAmount, individualAmount, percentages[i]));
+            }
+
+
             // Check if the total percentage is 100%
             if (Math.abs(totalPercentage - 100.0) > 0.001) {
                 Toast.makeText(this, "Total percentage must add up to 100%", Toast.LENGTH_SHORT).show();
@@ -555,12 +584,15 @@ public class MainActivity extends AppCompatActivity {
                 individualAmountsPerc[i] = (percentages[i] / 100.0) * totalBillAmount;
             }
 
+            // Save the calculated result and details in Shared Preferences
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+            saveSharedPreferencesPercentage(currentDate, personDetails);
 
             // Display the result in dialog
             StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n");
 
             // Line dashes
-            int lineLength = 42;
+            int lineLength = 30;
             for (int i = 0; i < lineLength; i++) {
                 customResultBuilder.append("-");
             }
@@ -593,6 +625,12 @@ public class MainActivity extends AppCompatActivity {
             double[] individualAmountsIndiv = new double[numPeopleIndividual];
             double totalIndividualAmount = 0.0;
 
+
+            // Create an ArrayList of Person objects with custom percentages
+            ArrayList<Person> personDetails = new ArrayList<>();
+            ArrayList<Result> individualResult = new ArrayList<>();
+
+
             for (int i = 0; i < numPeopleIndividual; i++) {
                 EditText editTextIndividual = editTextIndividualList.get(i);
                 String amountStr = editTextIndividual.getText().toString();
@@ -604,23 +642,42 @@ public class MainActivity extends AppCompatActivity {
 
                 individualAmountsIndiv[i] = Double.parseDouble(amountStr);
                 totalIndividualAmount += individualAmountsIndiv[i];
+
+                // Add the Person details to the ArrayList
+                personDetails.add(new Person("Custom Individual", "Person " + (i + 1), totalBillAmount, individualAmountsIndiv[i], 0));
             }
 
 
+            String correctAmountMsg, exceedAmountMsg, lackAmountMsg;
+
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+            correctAmountMsg = "Amounts are correctly calculated.";
+
             // Check if the total individual amount matches the total bill amount exactly
             if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
-                Toast.makeText(this, "Amounts are correctly calculated.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, correctAmountMsg, Toast.LENGTH_SHORT).show();
+                // Save the calculated result and details in SharedPreferences
+                individualResult.add(new Result(correctAmountMsg));
+                saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
             } else {
                 // Calculate the discrepancy amount (how much money is left out or exceeded)
                 double discrepancyAmount = totalIndividualAmount - totalBillAmount;
 
                 String formattedAmount = String.format("%.2f", discrepancyAmount);
 
+
+                exceedAmountMsg = "The total amount exceeds the total bill by RM " + formattedAmount + ".";
+                lackAmountMsg = "The total amount is RM " + formattedAmount + " less than the total bill.";
+
                 if (discrepancyAmount > 0) {
-                    Toast.makeText(this, "The total amount exceeds the total bill by RM " + formattedAmount, Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, exceedAmountMsg, Toast.LENGTH_LONG).show();
+                    // Save the calculated result and details in SharedPreferences
+                    individualResult.add(new Result(exceedAmountMsg));
+                    saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
                 } else {
-                    formattedAmount = String.format("%.2f", Math.abs(discrepancyAmount));
-                    Toast.makeText(this, "The total amount is RM " + formattedAmount + " less than the total bill.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, lackAmountMsg, Toast.LENGTH_LONG).show();
+                    individualResult.add(new Result(lackAmountMsg));
+                    saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
                 }
             }
 
@@ -702,6 +759,168 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "The total amount is RM " + formattedAmount + " less than the total bill.", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    // Load existing data from sharedPreferences
+    private ArrayList<Person> loadExistingEqualDetails() {
+        SharedPreferences sharedPreferences = getSharedPreferences("equal_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String equalDetailsJson = sharedPreferences.getString("equalDetails", null);
+
+        Type type = new TypeToken<ArrayList<Person>>() {
+        }.getType();
+        ArrayList<Person> existingPersonDetails = gson.fromJson(equalDetailsJson, type);
+
+        if (existingPersonDetails == null) {
+            existingPersonDetails = new ArrayList<>();
+        }
+
+        return existingPersonDetails;
+    }
+
+    private ArrayList<Person> loadExistingPercentageDetails() {
+        SharedPreferences sharedPreferences = getSharedPreferences("percentage_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String percentageDetailsJson = sharedPreferences.getString("percentageDetails", null);
+
+        Type type = new TypeToken<ArrayList<Person>>() {
+        }.getType();
+        ArrayList<Person> existingPersonDetails = gson.fromJson(percentageDetailsJson, type);
+
+        if (existingPersonDetails == null) {
+            existingPersonDetails = new ArrayList<>();
+        }
+
+        return existingPersonDetails;
+    }
+
+    private ArrayList<Person> loadExistingIndividualDetails() {
+        SharedPreferences sharedPreferences = getSharedPreferences("individual_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String individualDetailsJson = sharedPreferences.getString("individualDetails", null);
+
+        Type type = new TypeToken<ArrayList<Person>>() {
+        }.getType();
+        ArrayList<Person> existingPersonDetails = gson.fromJson(individualDetailsJson, type);
+
+        if (existingPersonDetails == null) {
+            existingPersonDetails = new ArrayList<>();
+        }
+
+        return existingPersonDetails;
+    }
+
+    private ArrayList<Result> loadExistingIndividualResult() {
+        SharedPreferences sharedPreferences = getSharedPreferences("individual_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String resultJson = sharedPreferences.getString("customIndividualResult", null);
+
+        Type type = new TypeToken<ArrayList<Result>>() {
+        }.getType();
+        ArrayList<Result> existingIndividualResult = gson.fromJson(resultJson, type);
+
+        if (existingIndividualResult == null) {
+            existingIndividualResult = new ArrayList<>();
+        }
+
+        return existingIndividualResult;
+    }
+
+    private void saveSharedPreferencesEqual(String date, ArrayList<Person> personDetails) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("equal_breakdown", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        ArrayList<Person> existingEqualDetails = loadExistingEqualDetails();
+
+        // Add new details to the existing list
+        existingEqualDetails.addAll(personDetails);
+
+        // Save the details in SharedPreferences
+        editor.putString("date", date);
+
+        // Convert the ArrayList of Person objects to JSON string using Gson library
+        Gson gson = new Gson();
+        String equalDetailsJson = gson.toJson(existingEqualDetails);
+        editor.putString("historyItems", equalDetailsJson); // use to store equal calculation person details
+
+
+        editor.apply();
+    }
+
+    private void saveSharedPreferencesPercentage(String date, ArrayList<Person> personDetails) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("percentage_breakdown", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        ArrayList<Person> existingPercentageDetails = loadExistingPercentageDetails();
+
+        // Add new details to the existing list
+        existingPercentageDetails.addAll(personDetails);
+
+        // Save the details in SharedPreferences
+        editor.putString("date", date);
+
+        // Convert the ArrayList of Person objects to JSON string using Gson library
+        Gson gson = new Gson();
+        String percentageDetailsJson = gson.toJson(existingPercentageDetails);
+        editor.putString("historyItems", percentageDetailsJson); // use to store percentage calculation person details
+
+        editor.apply();
+    }
+
+    private void saveSharedPreferencesIndividual(String date, ArrayList<Person> personDetails, ArrayList<Result> individualResult) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("individual_breakdown", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Load existing data
+        ArrayList<Person> existingPersonDetails = loadExistingIndividualDetails();
+        ArrayList<Result> existingIndividualResult = loadExistingIndividualResult();
+
+        // Add new details to the existing list
+        existingPersonDetails.addAll(personDetails);
+        existingIndividualResult.addAll(individualResult);
+
+        // Save the details in SharedPreferences
+        editor.putString("date", date);
+
+        // Convert the ArrayList of Person objects to JSON string using Gson library
+        Gson gson = new Gson();
+        String individualDetailsJson = gson.toJson(existingPersonDetails);
+        editor.putString("historyItems", individualDetailsJson); // use to store individual calculation person details
+
+        String resultJson = gson.toJson(existingIndividualResult);
+        editor.putString("customIndividualResult", resultJson);
+
+
+        editor.apply();
+    }
+
+    private void saveSharedPreferencesCombine(String date, ArrayList<Person> personDetails, String result) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("BillHistory", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Save the details in SharedPreferences
+        editor.putString("date", date);
+
+        // Convert the ArrayList of Person objects to JSON string using Gson library
+        Gson gson = new Gson();
+        String combineDetailsJson = gson.toJson(personDetails);
+        editor.putString("combineDetails", combineDetailsJson); // use to store combine calculation person details
+
+        editor.putString("result", result);
+
+        editor.apply();
+    }
+
+    // Clear SharedPreferences data (for debugging)
+    private void DeleteData(String key) {
+        SharedPreferences preferences = getSharedPreferences(key, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
     }
 
     // Share via Whatsapp
