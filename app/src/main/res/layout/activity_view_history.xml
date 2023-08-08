@@ -32,7 +32,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Add a Toolbar here if needed -->
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewHistory"

@@ -53,7 +53,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             holder.textViewResult.setText("Result: " + String.valueOf(historyItem.getResult()));
         }
 
-        // Set other fields as needed
     }
 
     @Override
@@ -81,5 +80,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             textViewResult = itemView.findViewById(R.id.textViewResult);
             // Initialize other TextViews for other fields
         }
+    }
+
+    public void updateList(ArrayList<HistoryItem> filteredItems) {
+        historyItems.clear();
+        historyItems.addAll(filteredItems);
+        notifyDataSetChanged();
     }
 }

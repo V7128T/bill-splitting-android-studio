@@ -25,12 +25,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,10 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextTotalBill, editTextNumPeople, editTextTotalBill2,
             editTextNumPeoplePercentage, editTextNumPeopleIndividual,
             editTextNumPeopleCombine, editTextTotalBillCombine;
-    private RadioGroup radioGroupOptions, radioGroupOptions2, radioGroupCombine;
     private RadioButton radioButtonEqual, radioButtonCustom, radioButtonIndividualAmount,
             radioButtonPercentage, radioButtonCombine, radioButtonCombine2;
-    private Button buttonCalculate, buttonCustom, buttonCalculateCombine;
     private TextView textViewResult;
     private ArrayList<EditText> editTextPercentageList = new ArrayList<>();
     private ArrayList<EditText> editTextIndividualList = new ArrayList<>();
@@ -65,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         DeleteData("equal_breakdown");
         DeleteData("individual_breakdown");
         DeleteData("percentage_breakdown");
+        DeleteData("combine_breakdown");
+
         editTextNumPeople = findViewById(R.id.editTextNumPeople);
         editTextNumPeoplePercentage = findViewById(R.id.editTextNumPeoplePercentage);
         editTextNumPeopleIndividual = findViewById(R.id.editTextNumPeopleIndividual);
@@ -72,18 +71,18 @@ public class MainActivity extends AppCompatActivity {
         editTextTotalBill = findViewById(R.id.editTextTotalBill);
         editTextTotalBill2 = findViewById(R.id.editTextTotalBill2);
         editTextTotalBillCombine = findViewById(R.id.editTextTotalBillCombine);
-        radioGroupOptions = findViewById(R.id.radioGroupOptions);
-        radioGroupOptions2 = findViewById(R.id.radioGroupOptions2);
-        radioGroupCombine = findViewById(R.id.radioGroupCombine);
+        RadioGroup radioGroupOptions = findViewById(R.id.radioGroupOptions);
+        RadioGroup radioGroupOptions2 = findViewById(R.id.radioGroupOptions2);
+        RadioGroup radioGroupCombine = findViewById(R.id.radioGroupCombine);
         radioButtonEqual = findViewById(R.id.radioButtonEqual);
         radioButtonCustom = findViewById(R.id.radioButtonCustom);
         radioButtonCombine = findViewById(R.id.radioButtonCombine);
         radioButtonCombine2 = findViewById(R.id.radioButtonCombine2);
         radioButtonIndividualAmount = findViewById(R.id.radioButtonIndividualAmount);
         radioButtonPercentage = findViewById(R.id.radioButtonPercentage);
-        buttonCalculate = findViewById(R.id.buttonCalculate);
-        buttonCustom = findViewById(R.id.buttonCalculateCustom);
-        buttonCalculateCombine = findViewById(R.id.buttonCalculateCombine);
+        Button buttonCalculate = findViewById(R.id.buttonCalculate);
+        Button buttonCustom = findViewById(R.id.buttonCalculateCustom);
+        Button buttonCalculateCombine = findViewById(R.id.buttonCalculateCombine);
         textViewResult = findViewById(R.id.textViewResult);
 
         findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
@@ -163,12 +162,14 @@ public class MainActivity extends AppCompatActivity {
                 if (checkedId == R.id.radioButtonPercentage) {
                     // Show percentage breakdown UI and hide Equal breakdown UI
                     setTitle("Custom Breakdown: Percentage");
+                    editTextNumPeopleIndividual.setText("2");
+                    editTextNumPeopleCombine.setText("2");
+                    clearEditText(editTextTotalBill2);
+                    clearEditText(editTextTotalBillCombine);
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.svIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.svPercentage).setVisibility(View.VISIBLE);
-                    editTextTotalBill2.setText("");
-                    editTextNumPeopleIndividual.setText("2");
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
                     editTextNumPeoplePercentage.setVisibility(View.VISIBLE);
                     editTextTotalBillCombine.setVisibility(View.GONE);
@@ -178,12 +179,14 @@ public class MainActivity extends AppCompatActivity {
                     // Show or hide the dynamic EditText fields based on selected option
                 } else if (checkedId == R.id.radioButtonIndividualAmount) {
                     setTitle("Custom Breakdown: Individual Amounts");
+                    clearEditText(editTextTotalBill2);
+                    clearEditText(editTextTotalBillCombine);
+                    editTextNumPeoplePercentage.setText("2");
+                    editTextNumPeopleCombine.setText("2");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.VISIBLE);
                     findViewById(R.id.svPercentage).setVisibility(View.GONE);
                     findViewById(R.id.svIndividualAmount).setVisibility(View.VISIBLE);
-                    editTextTotalBill2.setText("");
-                    editTextNumPeoplePercentage.setText("2");
                     editTextNumPeoplePercentage.setVisibility(View.GONE);
                     editTextNumPeopleIndividual.setVisibility(View.VISIBLE);
                     editTextTotalBillCombine.setVisibility(View.GONE);
@@ -196,14 +199,15 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
-                    editTextTotalBill2.setText("");
-                    editTextNumPeopleIndividual.setText("2");
-                    editTextNumPeoplePercentage.setText("2");
+                    clearEditText(editTextTotalBill2);
                     editTextNumPeoplePercentage.setVisibility(View.GONE);
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
 
                 } else {
                     setTitle("Equal Breakdown");
+                    clearEditText(editTextTotalBill2);
+                    editTextNumPeopleIndividual.setText("2");
+                    editTextNumPeoplePercentage.setText("2");
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
@@ -211,13 +215,8 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCombineAmount).setVisibility(View.GONE);
                     findViewById(R.id.svPercentage).setVisibility(View.GONE);
                     findViewById(R.id.svIndividualAmount).setVisibility(View.GONE);
-                    //editTextNumPeoplePercentage.setVisibility(View.GONE);
-                    //editTextNumPeopleIndividual.setVisibility(View.GONE);
                     editTextTotalBillCombine.setVisibility(View.GONE);
                     editTextNumPeopleCombine.setVisibility(View.GONE);
-                    editTextTotalBill2.setText("");
-                    editTextNumPeopleIndividual.setText("2");
-                    editTextNumPeoplePercentage.setText("2");
                     radioButtonEqual.setChecked(true);
                 }
 
@@ -227,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
         buttonCalculate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 calculateEqualBillBreakdown();
             }
         });
@@ -249,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize the number of people to 2 initially
         editTextNumPeoplePercentage.setText("2");
         editTextNumPeopleIndividual.setText("2");
+        editTextNumPeopleCombine.setText("2");
 
         // TextWatcher for Custom Percentage
 
@@ -317,9 +316,11 @@ public class MainActivity extends AppCompatActivity {
         // Ensure that the number of people is at least 2
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
+            editTextNumPeoplePercentage.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            editTextNumPeoplePercentage.setText("10");
             numPeople = 10;
         }
 
@@ -361,9 +362,11 @@ public class MainActivity extends AppCompatActivity {
         // Ensure that the number of people is at least 2 and not more than 10
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
+            editTextNumPeopleIndividual.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            editTextNumPeopleIndividual.setText("10");
             numPeople = 10;
         }
 
@@ -404,9 +407,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (numPeople < 2) {
             Toast.makeText(this, "Number of People must be MORE than or EQUAL to 2!", Toast.LENGTH_SHORT).show();
+            editTextNumPeopleCombine.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            editTextNumPeopleCombine.setText("10");
             numPeople = 10;
         }
 
@@ -465,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
         int maxNumPeople = 10;
 
         // Check if there's no radio button chosen
-        if (radioButtonEqual.isChecked() == false && radioButtonCustom.isChecked() == false && radioButtonCombine.isChecked() == false) {
+        if (!radioButtonEqual.isChecked() && !radioButtonCustom.isChecked() && !radioButtonCombine.isChecked()) {
             Toast.makeText(this, "Please choose one of the options below (Equal / Custom / Combine).", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -483,9 +488,11 @@ public class MainActivity extends AppCompatActivity {
         // Check if the number of people is greater than two and not greater than 10
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
+            editTextNumPeople.setText("2");
             return;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
+            editTextNumPeople.setText("10");
             return;
         }
 
@@ -494,17 +501,26 @@ public class MainActivity extends AppCompatActivity {
             // Equal break-down: divide total bill amount by the number of people
             double equalAmount = totalBillAmount / numPeople;
 
-            // Create an ArrayList of Person objects with equal amounts
-            ArrayList<Person> personDetails = new ArrayList<>();
-            for (int i = 0; i < numPeople; i++) {
-                personDetails.add(new Person("Equal Breakdown", "Person " + (i + 1), totalBillAmount, equalAmount, 0));
-            }
-
             // Display the result in the textViewResult
             StringBuilder resultBuilder = new StringBuilder("Bill Break-Down:\n");
 
             String formattedAmount = String.format("%.2f", equalAmount);
             resultBuilder.append("Each person need to pay: RM").append(formattedAmount).append(".");
+
+            int decimalPlaces = 2;
+            // Create a DecimalFormat object with the desired format pattern
+            String pattern = "#." + new String(new char[decimalPlaces]).replace('\0', '#');
+            DecimalFormat decimalFormat = new DecimalFormat(pattern);
+
+            // Format the double value to the 2 decimal places
+            double formattedEqualAmount = Double.parseDouble(decimalFormat.format(equalAmount));
+            double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
+
+            // Create an ArrayList of Person objects with equal amounts
+            ArrayList<Person> personDetails = new ArrayList<>();
+            for (int i = 0; i < numPeople; i++) {
+                personDetails.add(new Person("Equal Breakdown", "Person " + (i + 1), formattedTotalAmount, formattedEqualAmount, 0));
+            }
 
             textViewResult.setText(resultBuilder.toString());
             textViewResult.setVisibility(View.VISIBLE);
@@ -529,7 +545,7 @@ public class MainActivity extends AppCompatActivity {
         if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()
                 || numPeopleStrPercent.isEmpty()) {
             Toast.makeText(this,
-                    "Please enter all the details before proceed calculation."
+                    "Please enter all the details before proceeding with the calculation."
                     , Toast.LENGTH_SHORT).show();
             return;
         }
@@ -539,6 +555,10 @@ public class MainActivity extends AppCompatActivity {
         int numPeoplePercentage = Integer.parseInt(numPeopleStrPercent);
         int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
 
+        int decimalPlaces = 2;
+        // Create a DecimalFormat object with the desired format pattern
+        String pattern = "#." + new String(new char[decimalPlaces]).replace('\0', '#');
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
 
         if (editTextPercentageList.isEmpty()) {
             Toast.makeText(this, "Please enter percentages for each person.", Toast.LENGTH_SHORT).show();
@@ -563,20 +583,26 @@ public class MainActivity extends AppCompatActivity {
                 totalPercentage += percentages[i];
             }
 
+            // Format the double value to the 2 decimal places
+            double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
+            // Format values to 2 decimal places before storing in SharedPreferences
+            for (int i = 0; i < numPeoplePercentage; i++) {
+                percentages[i] = Double.parseDouble(decimalFormat.format(percentages[i]));
+            }
+
             // Create an ArrayList of Person objects with custom percentages
             ArrayList<Person> personDetails = new ArrayList<>();
             for (int i = 0; i < numPeoplePercentage; i++) {
                 double individualAmount = (percentages[i] / 100.0) * totalBillAmount;
-                personDetails.add(new Person("Custom Percentage", "Person" + (i + 1), totalBillAmount, individualAmount, percentages[i]));
+                double formattedIndividualAmount = Double.parseDouble(decimalFormat.format(individualAmount));
+                personDetails.add(new Person("Custom Percentage", "Person" + (i + 1), formattedTotalAmount, formattedIndividualAmount, percentages[i]));
             }
-
 
             // Check if the total percentage is 100%
             if (Math.abs(totalPercentage - 100.0) > 0.001) {
                 Toast.makeText(this, "Total percentage must add up to 100%", Toast.LENGTH_SHORT).show();
                 return;
             }
-
 
             // Calculate individual amounts based on percentages
             double[] individualAmountsPerc = new double[numPeoplePercentage];
@@ -597,6 +623,7 @@ public class MainActivity extends AppCompatActivity {
                 customResultBuilder.append("-");
             }
             customResultBuilder.append("\n");
+
 
             for (int i = 0; i < numPeoplePercentage; i++) {
 
@@ -621,6 +648,9 @@ public class MainActivity extends AppCompatActivity {
             // Custom Break-down: Individual
         } else if (radioButtonIndividualAmount.isChecked()) {
 
+            String correctAmountMsg, exceedAmountMsg, lackAmountMsg;
+            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
             // Get the individual amounts from dynamic EditText fields
             double[] individualAmountsIndiv = new double[numPeopleIndividual];
             double totalIndividualAmount = 0.0;
@@ -630,6 +660,13 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<Person> personDetails = new ArrayList<>();
             ArrayList<Result> individualResult = new ArrayList<>();
 
+
+            // Format the double value to the 2 decimal places
+            double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
+            // Format values to 2 decimal places before storing in SharedPreferences
+            for (int i = 0; i < numPeopleIndividual; i++) {
+                individualAmountsIndiv[i] = Double.parseDouble(decimalFormat.format(individualAmountsIndiv[i]));
+            }
 
             for (int i = 0; i < numPeopleIndividual; i++) {
                 EditText editTextIndividual = editTextIndividualList.get(i);
@@ -644,13 +681,9 @@ public class MainActivity extends AppCompatActivity {
                 totalIndividualAmount += individualAmountsIndiv[i];
 
                 // Add the Person details to the ArrayList
-                personDetails.add(new Person("Custom Individual", "Person " + (i + 1), totalBillAmount, individualAmountsIndiv[i], 0));
+                personDetails.add(new Person("Custom Individual", "Person " + (i + 1), formattedTotalAmount, individualAmountsIndiv[i], 0));
             }
 
-
-            String correctAmountMsg, exceedAmountMsg, lackAmountMsg;
-
-            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
             correctAmountMsg = "Amounts are correctly calculated.";
 
             // Check if the total individual amount matches the total bill amount exactly
@@ -673,27 +706,27 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, exceedAmountMsg, Toast.LENGTH_LONG).show();
                     // Save the calculated result and details in SharedPreferences
                     individualResult.add(new Result(exceedAmountMsg));
-                    saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
                 } else {
                     Toast.makeText(this, lackAmountMsg, Toast.LENGTH_LONG).show();
                     individualResult.add(new Result(lackAmountMsg));
-                    saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
                 }
+                saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
             }
 
         }
     }
 
-    // Method to handle the calculation for Combine option
+    // Combine Breakdown Method
     private void calculateCombineBillBreakdown() {
+        String correctAmountMsg = "Amounts are correctly calculated.";
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
         // Get the total bill amount and number of people from EditText fields
         String numPeopleStr = editTextNumPeopleCombine.getText().toString();
         String totalBillStr = editTextTotalBillCombine.getText().toString();
 
         int maxNumPeople = 10;
-
-        // Check if the input fields are empty
+        // Validate input fields
         if (totalBillStr.isEmpty() || numPeopleStr.isEmpty()) {
             Toast.makeText(this, "Please enter both the total bill amount and the number of people.", Toast.LENGTH_SHORT).show();
             return;
@@ -718,6 +751,18 @@ public class MainActivity extends AppCompatActivity {
         double totalPercentage = 0.0;
         double totalIndividualAmount = 0.0;
 
+        // Create an ArrayList of Person objects with custom percentages
+        ArrayList<Person> personDetails = new ArrayList<>();
+        ArrayList<Result> combineResult = new ArrayList<>();
+
+        int decimalPlaces = 2;
+        // Create a DecimalFormat object with the desired format pattern
+        String pattern = "#." + new String(new char[decimalPlaces]).replace('\0', '#');
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+
+        // Format the double value to the 2 decimal places
+        double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
+
         for (int i = 0; i < numPeople; i++) {
             EditText editTextPercentage = editTextCombinePercentageList.get(i);
             EditText editTextAmount = editTextCombineAmountList.get(i);
@@ -735,7 +780,22 @@ public class MainActivity extends AppCompatActivity {
 
             individualAmounts[i] = Double.parseDouble(amountStr);
             totalIndividualAmount += individualAmounts[i];
+
+            // Format the values to 2 decimal places before adding to the ArrayList
+            double formattedIndividualAmount = Double.parseDouble(decimalFormat.format(individualAmounts[i]));
+            double formattedPercentage = Double.parseDouble(decimalFormat.format(percentages[i]));
+
+            // Add the Person details to the ArrayList
+            personDetails.add(new Person("Combine Breakdown", "Person " + (i + 1), formattedTotalAmount, formattedIndividualAmount, formattedPercentage));
         }
+
+
+        double discrepancyAmount = totalIndividualAmount - totalBillAmount;
+        String formattedDiscrepancyAmount = String.format("%.2f", discrepancyAmount);
+
+        String discrepancyMsg = (discrepancyAmount > 0) ?
+                "The total amount exceeds the total bill by RM " + formattedDiscrepancyAmount + "." :
+                "The total amount is RM " + formattedDiscrepancyAmount + " less than the total bill.";
 
         // Check if the total percentage is 100%
         if (Math.abs(totalPercentage - 100.0) > 0.001) {
@@ -743,21 +803,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if the total individual amount matches the total bill amount exactly
-        if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
-            Toast.makeText(this, "Amounts are correctly calculated.", Toast.LENGTH_SHORT).show();
+        if (Math.abs(discrepancyAmount) < 0.001) {
+            combineResult.add(new Result(correctAmountMsg));
+            saveSharedPreferencesCombine(currentDate, personDetails, combineResult);
+            Toast.makeText(this, correctAmountMsg, Toast.LENGTH_SHORT).show();
         } else {
-            // Calculate the discrepancy amount (how much money is left out or exceeded)
-            double discrepancyAmount = totalIndividualAmount - totalBillAmount;
-
-            String formattedAmount = String.format("%.2f", discrepancyAmount);
-
-            if (discrepancyAmount > 0) {
-                Toast.makeText(this, "The total amount exceeds the total bill by RM " + formattedAmount, Toast.LENGTH_LONG).show();
-            } else {
-                formattedAmount = String.format("%.2f", Math.abs(discrepancyAmount));
-                Toast.makeText(this, "The total amount is RM " + formattedAmount + " less than the total bill.", Toast.LENGTH_LONG).show();
-            }
+            combineResult.add(new Result(discrepancyMsg));
+            saveSharedPreferencesCombine(currentDate, personDetails, combineResult);
+            Toast.makeText(this, discrepancyMsg, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -765,7 +818,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Person> loadExistingEqualDetails() {
         SharedPreferences sharedPreferences = getSharedPreferences("equal_breakdown", MODE_PRIVATE);
         Gson gson = new Gson();
-        String equalDetailsJson = sharedPreferences.getString("equalDetails", null);
+        String equalDetailsJson = sharedPreferences.getString("historyItems", null);
 
         Type type = new TypeToken<ArrayList<Person>>() {
         }.getType();
@@ -781,7 +834,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Person> loadExistingPercentageDetails() {
         SharedPreferences sharedPreferences = getSharedPreferences("percentage_breakdown", MODE_PRIVATE);
         Gson gson = new Gson();
-        String percentageDetailsJson = sharedPreferences.getString("percentageDetails", null);
+        String percentageDetailsJson = sharedPreferences.getString("historyItems", null);
 
         Type type = new TypeToken<ArrayList<Person>>() {
         }.getType();
@@ -797,7 +850,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Person> loadExistingIndividualDetails() {
         SharedPreferences sharedPreferences = getSharedPreferences("individual_breakdown", MODE_PRIVATE);
         Gson gson = new Gson();
-        String individualDetailsJson = sharedPreferences.getString("individualDetails", null);
+        String individualDetailsJson = sharedPreferences.getString("historyItems", null);
 
         Type type = new TypeToken<ArrayList<Person>>() {
         }.getType();
@@ -813,7 +866,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Result> loadExistingIndividualResult() {
         SharedPreferences sharedPreferences = getSharedPreferences("individual_breakdown", MODE_PRIVATE);
         Gson gson = new Gson();
-        String resultJson = sharedPreferences.getString("customIndividualResult", null);
+        String resultJson = sharedPreferences.getString("Result", null);
 
         Type type = new TypeToken<ArrayList<Result>>() {
         }.getType();
@@ -824,6 +877,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return existingIndividualResult;
+    }
+
+    private ArrayList<Person> loadExistingCombineDetails() {
+        SharedPreferences sharedPreferences = getSharedPreferences("combine_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String combineDetailsJson = sharedPreferences.getString("historyItems", null);
+
+        Type type = new TypeToken<ArrayList<Person>>() {
+        }.getType();
+        ArrayList<Person> existingPersonDetails = gson.fromJson(combineDetailsJson, type);
+
+        if (existingPersonDetails == null) {
+            existingPersonDetails = new ArrayList<>();
+        }
+
+        return existingPersonDetails;
+    }
+
+    private ArrayList<Result> loadExistingCombineResult() {
+        SharedPreferences sharedPreferences = getSharedPreferences("combine_breakdown", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String combineResultJson = sharedPreferences.getString("Result", null);
+
+        Type type = new TypeToken<ArrayList<Result>>() {
+        }.getType();
+        ArrayList<Result> existingCombineResult = gson.fromJson(combineResultJson, type);
+
+        if (existingCombineResult == null) {
+            existingCombineResult = new ArrayList<>();
+        }
+
+        return existingCombineResult;
     }
 
     private void saveSharedPreferencesEqual(String date, ArrayList<Person> personDetails) {
@@ -891,16 +976,23 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("historyItems", individualDetailsJson); // use to store individual calculation person details
 
         String resultJson = gson.toJson(existingIndividualResult);
-        editor.putString("customIndividualResult", resultJson);
-
+        editor.putString("Result", resultJson);
 
         editor.apply();
     }
 
-    private void saveSharedPreferencesCombine(String date, ArrayList<Person> personDetails, String result) {
+    private void saveSharedPreferencesCombine(String date, ArrayList<Person> personDetails, ArrayList<Result> combineResult) {
 
-        SharedPreferences sharedPreferences = getSharedPreferences("BillHistory", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("combine_breakdown", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Load existing data
+        ArrayList<Person> existingPersonDetails = loadExistingCombineDetails();
+        ArrayList<Result> existingCombineResult = loadExistingCombineResult();
+
+        // Add new details to the existing list
+        existingPersonDetails.addAll(personDetails);
+        existingCombineResult.addAll(combineResult);
 
         // Save the details in SharedPreferences
         editor.putString("date", date);
@@ -908,9 +1000,10 @@ public class MainActivity extends AppCompatActivity {
         // Convert the ArrayList of Person objects to JSON string using Gson library
         Gson gson = new Gson();
         String combineDetailsJson = gson.toJson(personDetails);
-        editor.putString("combineDetails", combineDetailsJson); // use to store combine calculation person details
+        editor.putString("historyItems", combineDetailsJson); // use to store combine calculation person details
 
-        editor.putString("result", result);
+        String resultJson = gson.toJson(existingCombineResult);
+        editor.putString("Result", resultJson);
 
         editor.apply();
     }
