@@ -19,15 +19,21 @@
             android:id="@+id/labelTotalBill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Total Bill Amount (RM)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/editTextTotalBill"
+            style="@style/EditTextCustomStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="numberDecimal"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelTotalBill"
             app:layout_constraintTop_toTopOf="@+id/labelTotalBill" />
@@ -36,15 +42,21 @@
             android:id="@+id/labelNumOfPeople"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Number of People (Max. 10)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
 
         <EditText
             android:id="@+id/editTextNumPeople"
+            style="@style/EditTextCustomStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="number"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
             app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
@@ -54,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="9dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toStartOf="@+id/buttonCalculate"
             app:layout_constraintStart_toEndOf="@+id/editTextNumPeople"
@@ -63,27 +76,33 @@
                 android:id="@+id/radioButtonEqual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Equal" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Equal"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonCustom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="Custom" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Custom"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonCombine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="Combine" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Combine"
+                android:textColor="@color/white" />
         </RadioGroup>
 
         <Button
             android:id="@+id/buttonCalculate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fontFamily="@font/proto_mono_semi_bold"
             android:text="Calculate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,37 +113,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/container_background"
+            android:fontFamily="@font/proto_mono_regular"
             android:orientation="vertical"
             android:paddingLeft="50dp"
             android:paddingTop="25dp"
             android:paddingRight="50dp"
             android:paddingBottom="100dp"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             android:visibility="gone"
+            app:backgroundTint="@color/darkGrey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonCalculate" />
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/layoutCombine"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="parent">
+        android:visibility="gone">
 
 
         <TextView
             android:id="@+id/labelTotalBillCombine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Total Bill Amount (RM)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -132,7 +154,9 @@
             android:id="@+id/editTextTotalBillCombine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="numberDecimal"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelTotalBillCombine"
             app:layout_constraintTop_toTopOf="@+id/labelTotalBillCombine" />
@@ -142,7 +166,10 @@
             android:id="@+id/labelNumOfPeopleCombine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Number of People (Max. 10)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBillCombine" />
 
@@ -150,7 +177,9 @@
             android:id="@+id/editTextNumPeopleCombine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="number"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelNumOfPeopleCombine"
             app:layout_constraintTop_toTopOf="@+id/labelNumOfPeopleCombine" />
@@ -170,21 +199,27 @@
                 android:id="@+id/radioButtonEqual3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Equal" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Equal"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonCustom2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="Custom" />
+                android:layout_marginStart="2dp"
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Custom"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonCombine2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="Combine" />
+                android:layout_marginStart="2dp"
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Combine"
+                android:textColor="@color/white" />
 
         </RadioGroup>
 
@@ -192,7 +227,12 @@
             android:id="@+id/textViewCombine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(%) Percentage for Individuals **Max. 10people**"
+            android:fontFamily="@font/proto_mono_regular"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="(%) Percentage for Individuals \n[Max. 10people]"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -205,8 +245,10 @@
                 android:id="@+id/layoutCombinePercentage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/proto_mono_regular"
                 android:inputType="number"
                 android:orientation="vertical"
+                android:textColor="@color/terminalGreen"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="parent">
 
@@ -214,12 +256,16 @@
 
         </ScrollView>
 
-
         <TextView
             android:id="@+id/textViewCombine2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="(RM) Amounts for Individuals **Max. 10people**"
+            android:fontFamily="@font/proto_mono_regular"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:text="(RM) Amounts for Individuals \n[Max. 10people]"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -232,8 +278,10 @@
                 android:id="@+id/layoutCombineAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/proto_mono_regular"
                 android:inputType="number"
                 android:orientation="vertical"
+                android:textColor="@color/terminalGreen"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="parent">
 
@@ -245,6 +293,9 @@
             android:id="@+id/buttonCalculateCombine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:fontFamily="@font/proto_mono_semi_bold"
             android:text="Calculate Combine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -256,17 +307,19 @@
     <LinearLayout
         android:id="@+id/layoutCustomBreakdown"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="parent">
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/labelTotalBill2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Total Bill Amount (RM)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -274,7 +327,9 @@
             android:id="@+id/editTextTotalBill2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="numberDecimal"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelTotalBill"
             app:layout_constraintTop_toTopOf="@+id/labelTotalBill" />
@@ -283,7 +338,10 @@
             android:id="@+id/labelNumOfPeople2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:text="Number of People (Max. 10)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextTotalBill" />
 
@@ -291,7 +349,9 @@
             android:id="@+id/editTextNumPeoplePercentage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="number"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
             app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
@@ -300,7 +360,9 @@
             android:id="@+id/editTextNumPeopleIndividual"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
             android:inputType="number"
+            android:textColor="@color/terminalGreen"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/labelNumOfPeople"
             app:layout_constraintTop_toTopOf="@+id/labelNumOfPeople" />
@@ -309,7 +371,11 @@
             android:id="@+id/textViewCustomBreakdown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/proto_mono_regular"
+            android:paddingBottom="10dp"
             android:text="List of people (Max. 10 people)"
+            android:textColor="@color/white"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -327,6 +393,7 @@
                 android:inputType="number"
                 android:orientation="vertical"
                 android:visibility="gone"
+                app:backgroundTint="@color/grey_900"
                 app:layout_constraintTop_toBottomOf="@+id/editTextNumPeoplePercentage">
 
             </LinearLayout>
@@ -343,8 +410,10 @@
                 android:id="@+id/layoutIndividualAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/proto_mono_regular"
                 android:inputType="number"
                 android:orientation="vertical"
+                android:textColor="@color/terminalGreen"
                 android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/editTextNumPeopleIndividual">
 
@@ -366,28 +435,34 @@
                 android:id="@+id/radioButtonEqual2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Equal" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Equal"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonPercentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="13dp"
-                android:text="Percentage(%)" />
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Percentage(%)"
+                android:textColor="@color/white" />
 
             <RadioButton
                 android:id="@+id/radioButtonIndividualAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="13dp"
-                android:text="Individual Amount" />
-
+                android:fontFamily="@font/proto_mono_light"
+                android:text="Individual"
+                android:textColor="@color/white" />
         </RadioGroup>
 
         <Button
             android:id="@+id/buttonCalculateCustom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:background="@color/white"
+            android:fontFamily="@font/proto_mono_semi_bold"
             android:text="Calculate Custom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

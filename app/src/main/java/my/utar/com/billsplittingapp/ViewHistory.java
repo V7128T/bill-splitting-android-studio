@@ -26,16 +26,25 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class ViewHistory extends AppCompatActivity {
+public class ViewHistory extends AppCompatActivity implements DeleteConfirmationDialog.DeleteConfirmationListener {
 
     private HistoryAdapter historyAdapter;
     private ArrayList<HistoryItem> originalHistoryItems;
-
+    FloatingActionButton fabDelete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_history);
+
+        // Initialize the FloatingActionButton
+        fabDelete = findViewById(R.id.fabDelete);
+        fabDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteConfirmationDialog();
+            }
+        });
 
         ArrayList<HistoryItem> historyItems1 = loadAllHistoryItems();
         // Make a copy of original history items
@@ -59,13 +68,6 @@ public class ViewHistory extends AppCompatActivity {
         ItemDecorator itemDecorator = new ItemDecorator(getResources().getColor(R.color.colorTheme), dividerHeightInPixels);
         recyclerView.addItemDecoration(itemDecorator);
 
-        // FAB
-        FloatingActionButton fabShare = findViewById(R.id.fabShare);
-
-        fabShare.setOnClickListener(v -> {
-            // Handle share action here
-            Toast.makeText(ViewHistory.this, "Share clicked", Toast.LENGTH_SHORT).show();
-        });
     }
 
     private ArrayList<HistoryItem> loadAllHistoryItems() {
@@ -152,6 +154,49 @@ public class ViewHistory extends AppCompatActivity {
         historyAdapter.updateList(filteredList); // Add this line to update the adapter
     }
 
+    private void showDeleteConfirmationDialog() {
+        DeleteConfirmationDialog confirmationDialog = new DeleteConfirmationDialog();
+        confirmationDialog.show(getSupportFragmentManager(), "custom_dialog_message");
+    }
+
+    @Override
+    public void onDeleteConfirmed() {
+        clearAllHistory();
+    }
+
+    private void clearAllHistory() {
+
+        if (originalHistoryItems.isEmpty()) {
+            Toast.makeText(this, "No history to delete.", Toast.LENGTH_SHORT).show();
+        } else {
+            originalHistoryItems.clear();
+            historyAdapter.updateList(new ArrayList<HistoryItem>()); // Update the adapter with an empty list
+
+            // Clear equal_breakdown history
+            clearSharedPreferences("equal_breakdown");
+
+            // Clear percentage_breakdown history
+            clearSharedPreferences("percentage_breakdown");
+
+            // Clear individual_breakdown history
+            clearSharedPreferences("individual_breakdown");
+
+            // Clear combine_breakdown history
+            clearSharedPreferences("combine_breakdown");
+
+
+            Toast.makeText(this, "All history cleared.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void clearSharedPreferences(String key) {
+        SharedPreferences sharedPreferences = getSharedPreferences(key, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Clear data by applying editor changes
+        editor.clear().apply();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -204,7 +249,7 @@ public class ViewHistory extends AppCompatActivity {
         return resultsHistoryItems;
     }*/
 
-    public class ItemDecorator extends RecyclerView.ItemDecoration {
+    public static class ItemDecorator extends RecyclerView.ItemDecoration {
 
         private final Paint paint;
         private final int dividerHeight;

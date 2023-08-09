@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -33,24 +35,43 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         HistoryItem historyItem = historyItems.get(position);
 
         holder.textViewDate.setText("Date: " + historyItem.getDate());
+        holder.textViewDate.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+        holder.textViewDate.setTextColor(ContextCompat.getColor(context, R.color.white));
+
         holder.textViewName.setText("Name: " + historyItem.getName());
+        holder.textViewName.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+        holder.textViewName.setTextColor(ContextCompat.getColor(context, R.color.white));
+
         holder.textViewCalculationType.setText("Type: " + historyItem.getCalculationType());
+        holder.textViewCalculationType.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+        holder.textViewCalculationType.setTextColor(ContextCompat.getColor(context, R.color.terminalGreen_lowAlpha));
+
         holder.textViewTotalAmount.setText("Total Amount: RM" + String.valueOf(historyItem.getTotalAmount()));
+        holder.textViewTotalAmount.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+        holder.textViewTotalAmount.setTextColor(ContextCompat.getColor(context, R.color.terminalGreen));
+
         holder.textViewIndividualAmount.setText("Individual Amount: RM" + String.valueOf(historyItem.getIndividualAmount()));
+        holder.textViewIndividualAmount.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+        holder.textViewIndividualAmount.setTextColor(ContextCompat.getColor(context, R.color.terminalGreen_lowAlpha));
 
         // Set the visibility of Percentage and Result TextViews based on the calculation type
         if (historyItem.getCalculationType().equals("Equal Breakdown")) {
             holder.textViewPercentage.setVisibility(View.GONE);
             holder.textViewResult.setVisibility(View.GONE);
+            holder.textViewCalculationType.setTextColor(ContextCompat.getColor(context, R.color.redCherry));
         } else if (historyItem.getCalculationType().equals("Custom Individual")) {
             holder.textViewPercentage.setVisibility(View.GONE);
-            holder.textViewResult.setVisibility(View.VISIBLE);
-            holder.textViewResult.setText("Result: " + String.valueOf(historyItem.getResult()));
+            holder.textViewResult.setVisibility(View.GONE);
+            holder.textViewCalculationType.setTextColor(ContextCompat.getColor(context, R.color.purple_700));
+            //holder.textViewResult.setText("Result: " + String.valueOf(historyItem.getResult()));
         } else {
             holder.textViewPercentage.setVisibility(View.VISIBLE);
-            holder.textViewResult.setVisibility(View.VISIBLE);
+            holder.textViewResult.setVisibility(View.GONE);
             holder.textViewPercentage.setText("Percentage: " + String.valueOf(historyItem.getIndividualPercentage()) + "%");
-            holder.textViewResult.setText("Result: " + String.valueOf(historyItem.getResult()));
+            holder.textViewPercentage.setTypeface(ResourcesCompat.getFont(context, R.font.proto_mono_light));
+            holder.textViewPercentage.setTextColor(ContextCompat.getColor(context, R.color.terminalGreen_lowAlpha));
+            holder.textViewCalculationType.setTextColor(ContextCompat.getColor(context, R.color.purpleBright));
+            //holder.textViewResult.setText("Result: " + String.valueOf(historyItem.getResult()));
         }
 
     }

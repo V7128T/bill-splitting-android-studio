@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity">
+
+    <ImageView
+        android:id="@+id/icon_blink"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_weight="4"
+        android:src="@drawable/ic_splashscreen"/>
+
+    <TextView
+        android:id="@+id/textViewSplashScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/icon_blink"
+        android:layout_centerInParent="true"
+        android:text="Splitless."
+        android:textSize="30dp"
+        android:textColor="@color/white"
+        app:fontFamily="@font/proto_mono_medium" />
+
+    <TextView
+        android:id="@+id/splashCopyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/proto_mono_medium"
+        android:text="Copyright © 2023 ItsVic. All rights reserved."
+        android:textColor="@color/terminalGreen"
+        android:textSize="8sp"/>
+</RelativeLayout>
+

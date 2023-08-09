@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.text.Editable;
 import android.text.InputType;
@@ -59,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DeleteData("equal_breakdown");
-        DeleteData("individual_breakdown");
-        DeleteData("percentage_breakdown");
-        DeleteData("combine_breakdown");
+        setTitle("Splitless.");
+//        DeleteData("equal_breakdown");
+//        DeleteData("individual_breakdown");
+//        DeleteData("percentage_breakdown");
+//        DeleteData("combine_breakdown");
 
         editTextNumPeople = findViewById(R.id.editTextNumPeople);
         editTextNumPeoplePercentage = findViewById(R.id.editTextNumPeoplePercentage);
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radioButtonEqual) {
                     // Show equal breakdown UI and hide custom breakdown UI
-                    setTitle("Equal Breakdown");
+                    setTitle("Equal-Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
@@ -128,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.radioButtonEqual3) {
                     // Show equal breakdown UI and hide custom breakdown UI
-                    setTitle("Equal Breakdown");
+                    setTitle("Equal-Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     radioButtonEqual.setChecked(true);
                 } else if (checkedId == R.id.radioButtonCustom2) {
                     // Show custom breakdown UI and hide equal breakdown UI
-                    setTitle("Custom Breakdown: Percentage");
+                    setTitle("Percentage Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
@@ -144,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     radioButtonPercentage.setChecked(true);
                 } else {
-                    setTitle("Combined Breakdown: Percentage & Amounts");
+                    setTitle("Combined Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (checkedId == R.id.radioButtonPercentage) {
                     // Show percentage breakdown UI and hide Equal breakdown UI
-                    setTitle("Custom Breakdown: Percentage");
+                    setTitle("Percentage Breakdown");
                     editTextNumPeopleIndividual.setText("2");
                     editTextNumPeopleCombine.setText("2");
                     clearEditText(editTextTotalBill2);
@@ -178,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     // Show or hide the dynamic EditText fields based on selected option
                 } else if (checkedId == R.id.radioButtonIndividualAmount) {
-                    setTitle("Custom Breakdown: Individual Amounts");
+                    setTitle("Individual Amounts Breakdown");
                     clearEditText(editTextTotalBill2);
                     clearEditText(editTextTotalBillCombine);
                     editTextNumPeoplePercentage.setText("2");
@@ -195,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
 
                 } else if (checkedId == R.id.radioButtonCombine) {
-                    setTitle("Combined Breakdown: Percentage & Amounts");
+                    setTitle("Combined Breakdown");
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
@@ -204,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
 
                 } else {
-                    setTitle("Equal Breakdown");
+                    setTitle("Equal-Breakdown");
                     clearEditText(editTextTotalBill2);
                     editTextNumPeopleIndividual.setText("2");
                     editTextNumPeoplePercentage.setText("2");
@@ -316,7 +319,6 @@ public class MainActivity extends AppCompatActivity {
         // Ensure that the number of people is at least 2
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
-            editTextNumPeoplePercentage.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
@@ -338,7 +340,15 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextPercentageIds.setHint("Enter Percentage For Person " + i);
-            editTextPercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // Set input type to accept only NUMBERS
+            // Set input type to accept only NUMBERS with decimals
+            editTextPercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // Set font family and text color
+            // Customized Cursor but API level 29 required..
+            //editTextPercentageIds.setCursorDrawable(R.drawable.custom_cursor);
+            editTextPercentageIds.setTypeface(ResourcesCompat.getFont(this, R.font.proto_mono_regular));
+            editTextPercentageIds.setTextColor(ContextCompat.getColor(this, R.color.terminalGreen));
+            editTextPercentageIds.setHintTextColor(ContextCompat.getColor(this, R.color.lightGrey_800));
+
             layoutCustomPercentage.addView(editTextPercentageIds);
 
             // Add the dynamically generated EditText view to the list
@@ -362,7 +372,6 @@ public class MainActivity extends AppCompatActivity {
         // Ensure that the number of people is at least 2 and not more than 10
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
-            editTextNumPeopleIndividual.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
@@ -384,7 +393,13 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextIndividualIds.setHint("Enter Amount for Person " + i);
-            editTextIndividualIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL); // Set input type to accept only NUMBERS
+            // Set input type to accept only NUMBERS with decimals
+            editTextIndividualIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // Set font family and text color
+            editTextIndividualIds.setTypeface(ResourcesCompat.getFont(this, R.font.proto_mono_regular));
+            editTextIndividualIds.setTextColor(ContextCompat.getColor(this, R.color.terminalGreen));
+            editTextIndividualIds.setHintTextColor(ContextCompat.getColor(this, R.color.lightGrey_800));
+
             layoutIndividualAmounts.addView(editTextIndividualIds);
 
             // Add the dynamically generated EditText view to the list
@@ -407,7 +422,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (numPeople < 2) {
             Toast.makeText(this, "Number of People must be MORE than or EQUAL to 2!", Toast.LENGTH_SHORT).show();
-            editTextNumPeopleCombine.setText("2");
             numPeople = 2;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
@@ -439,7 +453,13 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextCombinePercentageIds.setHint("Enter Percentage For Person " + i);
+            // Set input type to accept only NUMBERS with decimals
             editTextCombinePercentageIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // Set font family and text color
+            editTextCombinePercentageIds.setTypeface(ResourcesCompat.getFont(this, R.font.proto_mono_regular));
+            editTextCombinePercentageIds.setTextColor(ContextCompat.getColor(this, R.color.terminalGreen));
+            editTextCombinePercentageIds.setHintTextColor(ContextCompat.getColor(this, R.color.lightGrey_800));
+
             layoutCombinePercentage.addView(editTextCombinePercentageIds);
 
 
@@ -451,7 +471,13 @@ public class MainActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT
             ));
             editTextCombineAmountIds.setHint("Enter Amount for Person " + i);
+            // Set input type to accept only NUMBERS with decimals
             editTextCombineAmountIds.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            // Set font family and text color
+            editTextCombineAmountIds.setTypeface(ResourcesCompat.getFont(this, R.font.proto_mono_regular));
+            editTextCombineAmountIds.setTextColor(ContextCompat.getColor(this, R.color.terminalGreen));
+            editTextCombineAmountIds.setHintTextColor(ContextCompat.getColor(this, R.color.lightGrey_800));
+
             layoutCombineAmount.addView(editTextCombineAmountIds);
 
             // Add the dynamically generated EditText view to the list
@@ -488,7 +514,6 @@ public class MainActivity extends AppCompatActivity {
         // Check if the number of people is greater than two and not greater than 10
         if (numPeople < 2) {
             Toast.makeText(this, "Please enter a valid number of people (greater than 1).", Toast.LENGTH_SHORT).show();
-            editTextNumPeople.setText("2");
             return;
         } else if (numPeople > maxNumPeople) {
             Toast.makeText(this, "Number of People cannot exceed " + maxNumPeople, Toast.LENGTH_LONG).show();
@@ -521,6 +546,42 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < numPeople; i++) {
                 personDetails.add(new Person("Equal Breakdown", "Person " + (i + 1), formattedTotalAmount, formattedEqualAmount, 0));
             }
+
+            // Display the result in dialog
+            StringBuilder customResultBuilder = new StringBuilder("Total Amount = RM"+ formattedTotalAmount + "\n");
+
+            // Line dashes
+            int lineLength = 11;
+            for (int i = 0; i < lineLength; i++) {
+                customResultBuilder.append("><");
+            }
+
+            customResultBuilder.append("\nTotal Amount to pay for each person:\n");
+
+            // Line dashes
+            for (int i = 0; i < lineLength; i++) {
+                customResultBuilder.append("><");
+            }
+
+            customResultBuilder.append("\n");
+
+            for (int i = 0; i < numPeople; i++) {
+
+                customResultBuilder.append("Person ").append(i + 1).append(": RM").append(formattedEqualAmount).append("\n");
+            }
+
+            // Inflate the custom_dialog.xml layout
+            View dialogView = getLayoutInflater().inflate(R.layout.custom_dialog, null);
+
+            // Find the TextView inside the custom_dialog layout and set the result text
+            TextView textViewCustomResult = dialogView.findViewById(R.id.dialogMessage);
+            textViewCustomResult.setText(customResultBuilder.toString());
+
+            // Build and show the custom dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setView(dialogView);
+            resultDialog dialog = resultDialog.newInstances(customResultBuilder.toString());
+            dialog.show(getSupportFragmentManager(), "custom_dialog");
 
             textViewResult.setText(resultBuilder.toString());
             textViewResult.setVisibility(View.VISIBLE);
@@ -615,20 +676,27 @@ public class MainActivity extends AppCompatActivity {
             saveSharedPreferencesPercentage(currentDate, personDetails);
 
             // Display the result in dialog
-            StringBuilder customResultBuilder = new StringBuilder("Total Amount to pay for each person:\n");
+            StringBuilder customResultBuilder = new StringBuilder("Total Amount = RM" + formattedTotalAmount + "\n");
 
             // Line dashes
-            int lineLength = 30;
+            int lineLength = 11;
             for (int i = 0; i < lineLength; i++) {
-                customResultBuilder.append("-");
+                customResultBuilder.append("><");
             }
+            customResultBuilder.append("\n").append("Total Amount to pay for each person:\n");
+
+
+            for (int i = 0; i < lineLength; i++) {
+                customResultBuilder.append("><");
+            }
+
             customResultBuilder.append("\n");
 
 
             for (int i = 0; i < numPeoplePercentage; i++) {
 
                 String formattedAmount = String.format("%.2f", individualAmountsPerc[i]);
-                customResultBuilder.append("Person ").append(i + 1).append(": ").append(percentages[i]).append("% \n- RM ").append(formattedAmount).append("\n");
+                customResultBuilder.append("Person ").append(i + 1).append("(").append(percentages[i]).append("%): RM").append(formattedAmount).append("\n");
             }
 
             // Inflate the custom_dialog.xml layout

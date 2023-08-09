@@ -17,36 +17,48 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/dialogMessage"
+                android:id="@+id/dialogTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/proto_mono_light"
                 android:gravity="left"
                 android:padding="16dp"
-                android:text="Total Amount to pay for each person"
+                android:text="Confirm to DELETE all the history?"
                 android:textColor="#000000"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/dialogMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/proto_mono_light"
+                android:gravity="left"
+                android:padding="16dp"
+                android:text="Message here"
+                android:textColor="@color/redCherry"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
             <Button
-                android:id="@+id/buttonShare"
+                android:id="@+id/buttonConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:fontFamily="@font/proto_mono_medium"
                 android:padding="12dp"
-                android:text="Share"
+                android:text="YES"
                 android:textColor="@color/terminalGreen"
                 android:layout_marginBottom="10dp"/>
 
             <Button
-                android:id="@+id/buttonOK"
+                android:id="@+id/buttonCancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
                 android:fontFamily="@font/proto_mono_medium"
                 android:padding="12dp"
-                android:text="CLOSE"
+                android:text="cancel"
                 android:textColor="@color/redCherry" />
         </LinearLayout>
     </ScrollView>

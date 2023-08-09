@@ -6,18 +6,17 @@
 
     <!-- Floating Action Button for Share -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabShare"
+        android:id="@+id/fabDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/fabDelete"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorTheme"
-        android:src="@drawable/ic_baseline_share_24"
-        android:tint="@color/colorShare"
+        android:backgroundTint="@color/lightGrey_800"
+        android:src="@drawable/ic_trash_24"
+        app:borderWidth="0dp"
         app:fabSize="auto"
         app:layout_anchor="@+id/recyclerViewHistory"
         app:layout_anchorGravity="end|bottom" />
@@ -37,7 +36,7 @@
                 android:id="@+id/recyclerViewHistory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="8dp "/>
+                android:padding="8dp " />
         </LinearLayout>
     </ScrollView>
 

@@ -1,6 +1,7 @@
 package my.utar.com.billsplittingapp;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
@@ -48,11 +49,28 @@ public class resultDialog extends AppCompatDialogFragment {
             }
         });
 
+        // Share button
+        Button buttonShare = view.findViewById(R.id.buttonShare);
+        buttonShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareResult(resultMessage);
+            }
+        });
+
         // Build the custom dialog
         Dialog customDialog = new Dialog(getActivity());
         customDialog.setContentView(view);
 
         return customDialog;
+    }
+
+    // Function to share the result message through other apps
+    private void shareResult(String message) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        startActivity(Intent.createChooser(intent, "Share via"));
     }
 
 }
