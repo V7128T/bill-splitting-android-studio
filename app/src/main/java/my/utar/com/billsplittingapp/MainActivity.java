@@ -135,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
+                    editTextNumPeopleCombine.setText("2");
+                    clearEditText(editTextTotalBillCombine);
+                    editTextTotalBill.setVisibility(View.VISIBLE);
                     editTextNumPeople.setVisibility(View.VISIBLE);
                     radioButtonEqual.setChecked(true);
                 } else if (checkedId == R.id.radioButtonCustom2) {
@@ -144,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomBreakdown).setVisibility(View.VISIBLE);
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
+                    editTextNumPeopleCombine.setText("2");
+                    clearEditText(editTextTotalBillCombine);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.VISIBLE);
                     radioButtonPercentage.setChecked(true);
                 } else {
@@ -153,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
                     editTextNumPeopleIndividual.setVisibility(View.GONE);
                     findViewById(R.id.layoutCustomPercentage).setVisibility(View.GONE);
                     findViewById(R.id.layoutCombine).setVisibility(View.VISIBLE);
+                    editTextNumPeopleCombine.setText("2");
+                    clearEditText(editTextTotalBillCombine);
                     radioButtonCombine.setChecked(true);
                 }
             }
@@ -211,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
                     clearEditText(editTextTotalBill2);
                     editTextNumPeopleIndividual.setText("2");
                     editTextNumPeoplePercentage.setText("2");
+                    editTextTotalBill.setVisibility(View.VISIBLE);
+                    editTextNumPeople.setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutIndividualAmount).setVisibility(View.GONE);
                     findViewById(R.id.layoutEqualBreakdown).setVisibility(View.VISIBLE);
                     findViewById(R.id.layoutCombine).setVisibility(View.GONE);
@@ -218,8 +227,8 @@ public class MainActivity extends AppCompatActivity {
                     findViewById(R.id.layoutCombineAmount).setVisibility(View.GONE);
                     findViewById(R.id.svPercentage).setVisibility(View.GONE);
                     findViewById(R.id.svIndividualAmount).setVisibility(View.GONE);
-                    editTextTotalBillCombine.setVisibility(View.GONE);
-                    editTextNumPeopleCombine.setVisibility(View.GONE);
+                    editTextTotalBillCombine.setVisibility(View.VISIBLE);
+                    editTextNumPeopleCombine.setVisibility(View.VISIBLE);
                     radioButtonEqual.setChecked(true);
                 }
 
@@ -236,7 +245,11 @@ public class MainActivity extends AppCompatActivity {
         buttonCustom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calculateCustomBillBreakdown();
+                if (radioButtonPercentage.isChecked()) {
+                    calculateCustomPercentage(); // Call your method to calculate based on percentages
+                } else if (radioButtonIndividualAmount.isChecked()) {
+                    calculateCustomIndividual(); // Call your method to calculate based on individual amounts
+                }
             }
         });
 
@@ -548,7 +561,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Display the result in dialog
-            StringBuilder customResultBuilder = new StringBuilder("Total Amount = RM"+ formattedTotalAmount + "\n");
+            StringBuilder customResultBuilder = new StringBuilder("Total Amount = RM" + formattedTotalAmount + "\n");
 
             // Line dashes
             int lineLength = 11;
@@ -595,16 +608,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calculateCustomBillBreakdown() {
+    private void calculateCustomPercentage() {
 
         // Get the total bill amount and number of people from EditText fields
         String numPeopleStrPercent = editTextNumPeoplePercentage.getText().toString();
-        String numPeopleStrIndividual = editTextNumPeopleIndividual.getText().toString();
         String totalBillStr = editTextTotalBill2.getText().toString();
 
         // Check if the input fields are empty
-        if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()
-                || numPeopleStrPercent.isEmpty()) {
+        if (totalBillStr.isEmpty() || numPeopleStrPercent.isEmpty()) {
             Toast.makeText(this,
                     "Please enter all the details before proceeding with the calculation."
                     , Toast.LENGTH_SHORT).show();
@@ -614,7 +625,7 @@ public class MainActivity extends AppCompatActivity {
         // Parse the input strings to doubles
         double totalBillAmount = Double.parseDouble(totalBillStr);
         int numPeoplePercentage = Integer.parseInt(numPeopleStrPercent);
-        int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
+
 
         int decimalPlaces = 2;
         // Create a DecimalFormat object with the desired format pattern
@@ -713,75 +724,96 @@ public class MainActivity extends AppCompatActivity {
             dialog.show(getSupportFragmentManager(), "custom_dialog");
 
 
-            // Custom Break-down: Individual
-        } else if (radioButtonIndividualAmount.isChecked()) {
-
-            String correctAmountMsg, exceedAmountMsg, lackAmountMsg;
-            String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-
-            // Get the individual amounts from dynamic EditText fields
-            double[] individualAmountsIndiv = new double[numPeopleIndividual];
-            double totalIndividualAmount = 0.0;
-
-
-            // Create an ArrayList of Person objects with custom percentages
-            ArrayList<Person> personDetails = new ArrayList<>();
-            ArrayList<Result> individualResult = new ArrayList<>();
-
-
-            // Format the double value to the 2 decimal places
-            double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
-            // Format values to 2 decimal places before storing in SharedPreferences
-            for (int i = 0; i < numPeopleIndividual; i++) {
-                individualAmountsIndiv[i] = Double.parseDouble(decimalFormat.format(individualAmountsIndiv[i]));
-            }
-
-            for (int i = 0; i < numPeopleIndividual; i++) {
-                EditText editTextIndividual = editTextIndividualList.get(i);
-                String amountStr = editTextIndividual.getText().toString();
-
-                if (amountStr.isEmpty()) {
-                    Toast.makeText(this, "Please enter amount for Person " + (i + 1), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                individualAmountsIndiv[i] = Double.parseDouble(amountStr);
-                totalIndividualAmount += individualAmountsIndiv[i];
-
-                // Add the Person details to the ArrayList
-                personDetails.add(new Person("Custom Individual", "Person " + (i + 1), formattedTotalAmount, individualAmountsIndiv[i], 0));
-            }
-
-            correctAmountMsg = "Amounts are correctly calculated.";
-
-            // Check if the total individual amount matches the total bill amount exactly
-            if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
-                Toast.makeText(this, correctAmountMsg, Toast.LENGTH_SHORT).show();
-                // Save the calculated result and details in SharedPreferences
-                individualResult.add(new Result(correctAmountMsg));
-                saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
-            } else {
-                // Calculate the discrepancy amount (how much money is left out or exceeded)
-                double discrepancyAmount = totalIndividualAmount - totalBillAmount;
-
-                String formattedAmount = String.format("%.2f", discrepancyAmount);
-
-
-                exceedAmountMsg = "The total amount exceeds the total bill by RM " + formattedAmount + ".";
-                lackAmountMsg = "The total amount is RM " + formattedAmount + " less than the total bill.";
-
-                if (discrepancyAmount > 0) {
-                    Toast.makeText(this, exceedAmountMsg, Toast.LENGTH_LONG).show();
-                    // Save the calculated result and details in SharedPreferences
-                    individualResult.add(new Result(exceedAmountMsg));
-                } else {
-                    Toast.makeText(this, lackAmountMsg, Toast.LENGTH_LONG).show();
-                    individualResult.add(new Result(lackAmountMsg));
-                }
-                saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
-            }
-
         }
+    }
+
+    // Custom Break-down: Individual
+    private void calculateCustomIndividual() {
+        String correctAmountMsg, exceedAmountMsg, lackAmountMsg;
+        String currentDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
+
+        String numPeopleStrIndividual = editTextNumPeopleIndividual.getText().toString();
+        String totalBillStr = editTextTotalBill2.getText().toString();
+
+        // Check if the input fields are empty
+        if (totalBillStr.isEmpty() || numPeopleStrIndividual.isEmpty()) {
+            Toast.makeText(this,
+                    "Please enter all the details before proceeding with the calculation."
+                    , Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Parse the input strings to doubles
+        double totalBillAmount = Double.parseDouble(totalBillStr);
+        int numPeopleIndividual = Integer.parseInt(numPeopleStrIndividual);
+        // Get the individual amounts from dynamic EditText fields
+        double[] individualAmountsIndiv = new double[numPeopleIndividual];
+        double totalIndividualAmount = 0.0;
+
+        int decimalPlaces = 2;
+        // Create a DecimalFormat object with the desired format pattern
+        String pattern = "#." + new String(new char[decimalPlaces]).replace('\0', '#');
+        DecimalFormat decimalFormat = new DecimalFormat(pattern);
+
+
+        // Create an ArrayList of Person objects with custom percentages
+        ArrayList<Person> personDetails = new ArrayList<>();
+        ArrayList<Result> individualResult = new ArrayList<>();
+
+
+        // Format the double value to the 2 decimal places
+        double formattedTotalAmount = Double.parseDouble(decimalFormat.format(totalBillAmount));
+        // Format values to 2 decimal places before storing in SharedPreferences
+        for (int i = 0; i < numPeopleIndividual; i++) {
+            individualAmountsIndiv[i] = Double.parseDouble(decimalFormat.format(individualAmountsIndiv[i]));
+        }
+
+        for (int i = 0; i < numPeopleIndividual; i++) {
+            EditText editTextIndividual = editTextIndividualList.get(i);
+            String amountStr = editTextIndividual.getText().toString();
+
+            if (amountStr.isEmpty()) {
+                Toast.makeText(this, "Please enter amount for Person " + (i + 1), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            individualAmountsIndiv[i] = Double.parseDouble(amountStr);
+            totalIndividualAmount += individualAmountsIndiv[i];
+
+            // Add the Person details to the ArrayList
+            personDetails.add(new Person("Custom Individual", "Person " + (i + 1), formattedTotalAmount, individualAmountsIndiv[i], 0));
+        }
+
+        correctAmountMsg = "Amounts are correctly calculated.";
+
+        // Check if the total individual amount matches the total bill amount exactly
+        if (Math.abs(totalIndividualAmount - totalBillAmount) < 0.001) {
+            Toast.makeText(this, correctAmountMsg, Toast.LENGTH_SHORT).show();
+            // Save the calculated result and details in SharedPreferences
+            individualResult.add(new Result(correctAmountMsg));
+            saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
+        } else {
+            // Calculate the discrepancy amount (how much money is left out or exceeded)
+            double discrepancyAmount = totalIndividualAmount - totalBillAmount;
+
+            String formattedAmount = String.format("%.2f", discrepancyAmount);
+
+
+            exceedAmountMsg = "The total amount exceeds the total bill by RM " + formattedAmount + ".";
+            lackAmountMsg = "The total amount is RM " + formattedAmount + " less than the total bill.";
+
+            if (discrepancyAmount > 0) {
+                Toast.makeText(this, exceedAmountMsg, Toast.LENGTH_LONG).show();
+                // Save the calculated result and details in SharedPreferences
+                individualResult.add(new Result(exceedAmountMsg));
+            } else {
+                Toast.makeText(this, lackAmountMsg, Toast.LENGTH_LONG).show();
+                individualResult.add(new Result(lackAmountMsg));
+            }
+            saveSharedPreferencesIndividual(currentDate, personDetails, individualResult);
+        }
+
+
     }
 
     // Combine Breakdown Method
@@ -1104,21 +1136,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(whatsappIntent);
     }
 
-    // Share via email
-    private void shareViaEmail(String subject, String message, String[] recipients) {
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipients);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
-
-        try {
-            startActivity(Intent.createChooser(emailIntent, "Choose an email client"));
-        } catch (android.content.ActivityNotFoundException ex) {
-            // Handle the case where no email clients are installed on the device
-            Toast.makeText(this, "No email clients installed.", Toast.LENGTH_SHORT).show();
-        }
-    }
 
 
     // Menu
